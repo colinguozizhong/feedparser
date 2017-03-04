@@ -102,10 +102,6 @@ abstract class BaseRssParser implements RssParser {
         }
     }
 
-    protected void channel(RssParserCallback callback, String currentTag, char[] ch, int start, int length, Map<String, String> attrs) {
-        channel(callback, currentTag, getText(ch, start, length), attrs);
-    }
-
     protected void channel(RssParserCallback callback, String currentTag, String text, Map<String, String> attrs) {
 
         switch (currentTag) {
@@ -162,10 +158,6 @@ abstract class BaseRssParser implements RssParser {
         }
     }
 
-    protected void image(RssParserCallback callback, String currentTag, char[] ch, int start, int length) {
-        image(callback, currentTag, getText(ch, start, length));
-    }
-
     protected void image(RssParserCallback callback, String currentTag, String text) {
         RssParserCallback.ImageCallback imageCallback = callback.getImageCallback();
         if (imageCallback != null) {
@@ -193,11 +185,6 @@ abstract class BaseRssParser implements RssParser {
         }
     }
 
-
-    protected void textInput(RssParserCallback callback, String currentTag, char[] ch, int start, int length) {
-        textInput(callback, currentTag, getText(ch, start, length));
-    }
-
     protected void textInput(RssParserCallback callback, String currentTag, String text) {
         RssParserCallback.TextInputCallBack textInputCallBack = callback.getTextInputCallBack();
         if (textInputCallBack != null) {
@@ -216,10 +203,6 @@ abstract class BaseRssParser implements RssParser {
                     break;
             }
         }
-    }
-
-    protected void item(RssParserCallback callback, String currentTag, char[] ch, int start, int length, Map<String, String> attrs) {
-        item(callback, currentTag, getText(ch, start, length), attrs);
     }
 
     protected void item(RssParserCallback callback, String currentTag, String text, Map<String, String> attrs) {
@@ -264,8 +247,5 @@ abstract class BaseRssParser implements RssParser {
             }
         }
     }
-
-    protected String getText(char[] ch, int start, int length) {
-        return new String(ch, start, length).trim();
-    }
+    
 }

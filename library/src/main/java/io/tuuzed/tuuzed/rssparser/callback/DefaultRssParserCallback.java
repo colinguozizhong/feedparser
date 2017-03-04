@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class DefaultRssParserCallback implements RssParserCallback {
     @Override
     public void begin() {
-
+        
     }
 
     @Override

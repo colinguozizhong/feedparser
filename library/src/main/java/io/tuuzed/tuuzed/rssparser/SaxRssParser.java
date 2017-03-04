@@ -127,24 +127,28 @@ public class SaxRssParser extends BaseRssParser {
             }
             if (rssParser.isBeginChannel && !rssParser.isBeginItem) {
                 if (rssParser.isBeginImage) {
-                    rssParser.image(callback, currentTag, ch, start, length);
+                    rssParser.image(callback, currentTag, getText(ch, start, length));
                 } else if (rssParser.isBeginSkipDays) {
                     if (rssParser.temp_list != null && currentTag.equals(RssNorm.SKIP_DAYS_DAY)) {
-                        rssParser.temp_list.add(rssParser.getText(ch, start, length));
+                        rssParser.temp_list.add(getText(ch, start, length));
                     }
                 } else if (rssParser.isBeginSkipHours) {
                     if (rssParser.temp_list != null && currentTag.equals(RssNorm.SKIP_HOURS_HOUR)) {
-                        rssParser.temp_list.add(rssParser.getText(ch, start, length));
+                        rssParser.temp_list.add(getText(ch, start, length));
                     }
                 } else if (rssParser.isBeginTextInput) {
-                    rssParser.textInput(callback, currentTag, ch, start, length);
+                    rssParser.textInput(callback, currentTag, getText(ch, start, length));
                 } else {
-                    rssParser.channel(callback, currentTag, ch, start, length, attrs);
+                    rssParser.channel(callback, currentTag, getText(ch, start, length), attrs);
                 }
             } else if (rssParser.isBeginItem) {
-                rssParser.item(callback, currentTag, ch, start, length, attrs);
+                rssParser.item(callback, currentTag, getText(ch, start, length), attrs);
             }
         }
+    }
+
+    private static String getText(char[] ch, int start, int length) {
+        return new String(ch, start, length).trim();
     }
 
 }
