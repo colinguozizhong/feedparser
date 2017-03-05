@@ -33,57 +33,64 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import io.tuuzed.tuuzed.rssparser.callback.RssParserCallback;
 
 
 public class SaxRssParser extends BaseRssParser {
     private static SAXParser mSAXParser;
-    private static SaxRssParser instance;
 
-
-    private SaxRssParser() throws ParserConfigurationException, SAXException {
-        mSAXParser = SAXParserFactory.newInstance().newSAXParser();
+    private SaxRssParser() {
     }
 
-    public static SaxRssParser getInstance() throws ParserConfigurationException, SAXException {
-        if (instance == null) {
-            synchronized (SaxRssParser.class) {
-                if (instance == null) {
-                    instance = new SaxRssParser();
-                }
+
+    private static class Holder {
+        private static SaxRssParser instance = new SaxRssParser();
+    }
+
+    public static SaxRssParser getInstance() {
+        return Holder.instance;
+    }
+
+
+    public void init(SAXParser saxParser) {
+        mSAXParser = saxParser;
+    }
+
+    public void parse(String url, String defCharSet, RssParserCallback callback) {
+        if (mSAXParser == null) {
+            throw new RuntimeException("SAXParser object cannot be empty ! Are you sure you have initialized ?");
+        } else {
+            try {
+                mSAXParser.parse(url, new RssHandler(this, callback));
+            } catch (SAXException | IOException e) {
+                callback.error(e);
             }
         }
-        return instance;
     }
 
-    @Override
-    public void parse(String url, String defCharSet, RssParserCallback callback) {
-        try {
-            mSAXParser.parse(url, new RssHandler(this, callback));
-        } catch (SAXException | IOException e) {
-            callback.error(e);
-        }
-    }
-
-    @Override
     public void parse(Reader reader, RssParserCallback callback) {
-        try {
-            mSAXParser.parse(new InputSource(reader), new RssHandler(this, callback));
-        } catch (SAXException | IOException e) {
-            callback.error(e);
+        if (mSAXParser == null) {
+            throw new RuntimeException("SAXParser object cannot be empty ! Are you sure you have initialized ?");
+        } else {
+            try {
+                mSAXParser.parse(new InputSource(reader), new RssHandler(this, callback));
+            } catch (SAXException | IOException e) {
+                callback.error(e);
+            }
         }
     }
 
-    @Override
     public void parse(InputStream is, String charSet, RssParserCallback callback) {
-        try {
-            mSAXParser.parse(is, new RssHandler(this, callback));
-        } catch (SAXException | IOException e) {
-            callback.error(e);
+        if (mSAXParser == null) {
+            throw new RuntimeException("SAXParser object cannot be empty ! Are you sure you have initialized ?");
+        } else {
+            try {
+                mSAXParser.parse(is, new RssHandler(this, callback));
+            } catch (SAXException | IOException e) {
+                callback.error(e);
+            }
         }
     }
 

@@ -25,7 +25,6 @@ package io.tuuzed.tuuzed.rssparser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,25 +38,24 @@ import io.tuuzed.tuuzed.rssparser.callback.RssParserCallback;
 import io.tuuzed.tuuzed.rssparser.util.CharSetUtils;
 
 public class XmlPullRssParser extends BaseRssParser {
-    private XmlPullParser mParser;
-    private static XmlPullRssParser instance;
+    private XmlPullParser mXmlPullParser;
 
-    private XmlPullRssParser() throws XmlPullParserException {
-        mParser = XmlPullParserFactory.newInstance().newPullParser();
+    private XmlPullRssParser() {
     }
 
-    public static XmlPullRssParser getInstance() throws XmlPullParserException {
-        if (instance == null) {
-            synchronized (XmlPullRssParser.class) {
-                if (instance == null) {
-                    instance = new XmlPullRssParser();
-                }
-            }
-        }
-        return instance;
+    private static class Holder {
+        private static XmlPullRssParser instance = new XmlPullRssParser();
     }
 
-    @Override
+    public static XmlPullRssParser getInstance() {
+        return Holder.instance;
+    }
+
+
+    public void init(XmlPullParser xmlPullParser) {
+        mXmlPullParser = xmlPullParser;
+    }
+
     public void parse(String url, String defCharSet, RssParserCallback callback) {
         String[] charSet = new String[1];
         InputStream inputStream = null;
@@ -79,12 +77,13 @@ public class XmlPullRssParser extends BaseRssParser {
         }
     }
 
-    @Override
     public void parse(Reader reader, RssParserCallback callback) {
-        if (mParser != null) {
+        if (mXmlPullParser == null) {
+            throw new RuntimeException("XmlPullParser object cannot be empty ! Are you sure you have initialized ?");
+        } else {
             try {
-                mParser.setInput(reader);
-                parse(mParser, callback);
+                mXmlPullParser.setInput(reader);
+                parse(mXmlPullParser, callback);
             } catch (XmlPullParserException e) {
                 callback.error(e);
             } finally {
@@ -96,17 +95,16 @@ public class XmlPullRssParser extends BaseRssParser {
                     }
                 }
             }
-        } else {
-            throw new RuntimeException("XmlPullParser object cannot be empty !");
         }
     }
 
-    @Override
     public void parse(InputStream is, String charSet, RssParserCallback callback) {
-        if (mParser != null) {
+        if (mXmlPullParser == null) {
+            throw new RuntimeException("XmlPullParser object cannot be empty ! Are you sure you have initialized ?");
+        } else {
             try {
-                mParser.setInput(is, charSet);
-                parse(mParser, callback);
+                mXmlPullParser.setInput(is, charSet);
+                parse(mXmlPullParser, callback);
             } catch (XmlPullParserException e) {
                 callback.error(e);
             } finally {
@@ -118,8 +116,6 @@ public class XmlPullRssParser extends BaseRssParser {
                     }
                 }
             }
-        } else {
-            throw new RuntimeException("XmlPullParser object cannot be empty !");
         }
     }
 
@@ -148,12 +144,12 @@ public class XmlPullRssParser extends BaseRssParser {
 
     // 开始标签
     private void startTag(RssParserCallback callback) {
-        String name = mParser.getName();
+        String name = mXmlPullParser.getName();
         startTag(callback, name);
         if (RssNorm.RSS.equals(name)) {
-            for (int i = 0; i < mParser.getAttributeCount(); i++) {
-                if (RssNorm.RSS_VERSION.equals(mParser.getAttributeName(i))) {
-                    callback.rss(mParser.getAttributeValue(i));
+            for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
+                if (RssNorm.RSS_VERSION.equals(mXmlPullParser.getAttributeName(i))) {
+                    callback.rss(mXmlPullParser.getAttributeValue(i));
                     break;
                 }
             }
@@ -174,15 +170,15 @@ public class XmlPullRssParser extends BaseRssParser {
                 textInput(callback, name, nextText());
             } else {
                 Map<String, String> attrs = new HashMap<>();
-                for (int i = 0; i < mParser.getAttributeCount(); i++) {
-                    attrs.put(mParser.getAttributeName(i), mParser.getAttributeValue(i).trim());
+                for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
+                    attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
                 }
                 channel(callback, name, nextText(), attrs);
             }
         } else if (isBeginItem) {
             Map<String, String> attrs = new HashMap<>();
-            for (int i = 0; i < mParser.getAttributeCount(); i++) {
-                attrs.put(mParser.getAttributeName(i), mParser.getAttributeValue(i).trim());
+            for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
+                attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
             }
             item(callback, name, nextText(), attrs);
         }
@@ -190,13 +186,13 @@ public class XmlPullRssParser extends BaseRssParser {
 
     // 结束标签
     private void endTag(RssParserCallback callback) {
-        endTag(callback, mParser.getName());
+        endTag(callback, mXmlPullParser.getName());
     }
 
     // 取得内容
     private String nextText() {
         try {
-            return mParser.nextText();
+            return mXmlPullParser.nextText();
         } catch (XmlPullParserException | IOException e) {
             return null;
         }

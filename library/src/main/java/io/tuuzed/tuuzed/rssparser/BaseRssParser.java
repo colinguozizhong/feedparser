@@ -10,7 +10,7 @@ import io.tuuzed.tuuzed.rssparser.util.DateUtils;
 /**
  * @author TuuZed
  */
-abstract class BaseRssParser implements RssParser {
+abstract class BaseRssParser {
     protected boolean isBeginRss = false;
     protected boolean isBeginChannel = false;
     protected boolean isBeginImage = false;
