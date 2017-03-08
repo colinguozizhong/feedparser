@@ -27,325 +27,290 @@ import java.util.List;
 
 import io.tuuzed.tuuzed.rssparser.callback.RssParserCallback;
 
-public class TestCallback implements RssParserCallback {
-
-    private static void print(String s) {
-        System.out.printf("=> %s() ", s);
-    }
-
-    private static void println(String s) {
-        System.out.println(s);
-    }
-
+class TestCallback implements RssParserCallback {
     @Override
     public void begin() {
-        println("");
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>  rss");
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("======================rss======================");
     }
 
     @Override
     public void rss(String version) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("version = " + version);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("version = " + version);
+
     }
 
     @Override
     public void title(String title) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("title = " + title);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("title = " + title);
+
     }
 
     @Override
     public void description(String description) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("description = " + description);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("description = " + description);
     }
 
     @Override
     public void link(String link) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("link = " + link);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("link = " + link);
     }
 
     @Override
     public void category(String category, String domain) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("category = " + category + " , domain=" + domain);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("category = " + category + " , domain=" + domain);
     }
 
     @Override
     public void cloud(String domain, String port, String path, String registerProcedure, String protocol) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("domain = " + domain + " , port=" + port + " , path=" + path + " , registerProcedure=" + registerProcedure + " , protocol=" + protocol);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("domain = " + domain + " , port=" + port + " , path=" + path + " , registerProcedure=" + registerProcedure + " , protocol=" + protocol);
     }
 
     @Override
     public void copyright(String copyright) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("copyright=" + copyright);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("copyright=" + copyright);
     }
 
     @Override
     public void docs(String docs) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("docs=" + docs);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("docs=" + docs);
     }
 
     @Override
     public void generator(String generator) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("generator=" + generator);
-    }
-
-    @Override
-    public ImageCallback getImageCallback() {
-        return new ImageCallbackImpl();
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("generator=" + generator);
     }
 
     @Override
     public void language(String language) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("language = " + language);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("language = " + language);
     }
 
     @Override
     public void lastBuildDate(Date lastBuildDate) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("lastBuildDate = " + lastBuildDate);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("lastBuildDate = " + lastBuildDate);
     }
 
     @Override
     public void managingEditor(String managingEditor) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("managingEditor = " + managingEditor);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("managingEditor = " + managingEditor);
     }
 
     @Override
     public void pubDate(Date pubDate) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("pubDate = " + pubDate);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("pubDate = " + pubDate);
     }
 
     @Override
     public void rating(String rating) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("rating = " + rating);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("rating = " + rating);
     }
 
     @Override
     public void skipDays(List<String> skipDays) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("skipDays = " + skipDays.toString());
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("skipDays = " + skipDays.toString());
     }
 
     @Override
     public void skipHours(List<String> skipHours) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("skipHours = " + skipHours.toString());
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("skipHours = " + skipHours.toString());
     }
 
-    @Override
-    public TextInputCallBack getTextInputCallBack() {
-        return new TextInputCallBackImpl();
-    }
 
     @Override
     public void ttl(String ttl) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("ttl = " + ttl);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("ttl = " + ttl);
     }
 
     @Override
     public void webMaster(String webMaster) {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println("webMaster = " + webMaster);
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("webMaster = " + webMaster);
     }
 
-    @Override
-    public ItemCallback getItemCallback() {
-        return new ItemCallbackImpl();
-    }
 
     @Override
     public void error(Throwable e) {
-        System.err.print(" => " + Thread.currentThread().getStackTrace()[1].getMethodName());
+        System.err.print(" => " + Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
         System.err.println(e.toString());
     }
 
     @Override
     public void end() {
-        print(Thread.currentThread().getStackTrace()[1].getMethodName());
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>   rss");
-        println("");
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== rss ======================\n");
     }
 
-    private static class ItemCallbackImpl implements RssParserCallback.ItemCallback {
-
-        @Override
-        public void begin() {
-            println("");
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>   item");
-        }
-
-        @Override
-        public void title(String title) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("title = " + title);
-        }
-
-        @Override
-        public void description(String description) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("description = " + description);
-        }
-
-        @Override
-        public void link(String link) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("link = " + link);
-        }
-
-        @Override
-        public void author(String author) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("author = " + author);
-        }
-
-        @Override
-        public void category(String category, String domain) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("category = " + category + " , domain = " + domain);
-        }
-
-        @Override
-        public void comments(String comments) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("comments = " + comments);
-        }
-
-        @Override
-        public void enclosure(String length, String type, String url) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("length = " + length + " , type = " + type + " , url = " + url);
-        }
-
-        @Override
-        public void guid(String guid, boolean isPermaLink) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("guid = " + guid + " , isPermaLink = " + isPermaLink);
-        }
-
-        @Override
-        public void source(String source, String url) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("source = " + source + " , url = " + url);
-        }
-
-        @Override
-        public void pubDate(Date pubDate) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("pubDate = " + pubDate);
-        }
-
-        @Override
-        public void end() {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>   item");
-            println("");
-        }
+    @Override
+    public void textInputBegin() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== textInputBegin ======================");
     }
 
-    private static class TextInputCallBackImpl implements RssParserCallback.TextInputCallBack {
-        @Override
-        public void begin() {
-            println("");
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>   textinput");
-        }
-
-        @Override
-        public void title(String title) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("title = " + title);
-        }
-
-        @Override
-        public void name(String name) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("name = " + name);
-        }
-
-        @Override
-        public void link(String link) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("link = " + link);
-        }
-
-        @Override
-        public void description(String description) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("description = " + description);
-        }
-
-        @Override
-        public void end() {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>>  textinput");
-            println("");
-        }
+    @Override
+    public void textInputTitle(String title) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("title = " + title);
     }
 
-    private static class ImageCallbackImpl implements RssParserCallback.ImageCallback {
-        @Override
-        public void begin() {
-            println("");
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>   image ");
-        }
+    @Override
+    public void textInputName(String name) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("name = " + name);
+    }
 
-        @Override
-        public void title(String title) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("title = " + title);
-        }
+    @Override
+    public void textInputLink(String link) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("link = " + link);
+    }
 
-        @Override
-        public void url(String url) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("url = " + url);
-        }
+    @Override
+    public void textInputDescription(String description) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("description = " + description);
+    }
 
-        @Override
-        public void link(String link) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("link = " + link);
-        }
+    @Override
+    public void textInputEnd() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== textInputEnd ======================\n");
+    }
 
-        @Override
-        public void description(String description) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("description = " + description);
-        }
+    @Override
+    public void imageBegin() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== imageBegin ======================");
+    }
 
-        @Override
-        public void height(String height) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("height = " + height);
-        }
+    @Override
+    public void imageTitle(String title) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("title = " + title);
+    }
 
-        @Override
-        public void width(String width) {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println("width = " + width);
-        }
+    @Override
+    public void imageUrl(String url) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("url = " + url);
+    }
 
-        @Override
-        public void end() {
-            print(Thread.currentThread().getStackTrace()[1].getMethodName());
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>   image");
-            println("");
-        }
+    @Override
+    public void imageLink(String link) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("link = " + link);
+    }
+
+    @Override
+    public void imageDescription(String description) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("description = " + description);
+    }
+
+    @Override
+    public void imageHeight(String height) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("height = " + height);
+    }
+
+    @Override
+    public void imageWidth(String width) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("width = " + width);
+    }
+
+    @Override
+    public void imageEnd() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== imageEnd ======================\n");
+    }
+
+    @Override
+    public void itemBegin() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== itemBegin ======================");
+    }
+
+    @Override
+    public void itemTitle(String title) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("title = " + title);
+    }
+
+    @Override
+    public void itemDescription(String description) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("description = " + description);
+    }
+
+    @Override
+    public void itemLink(String link) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("link = " + link);
+    }
+
+    @Override
+    public void itemAuthor(String author) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("author = " + author);
+    }
+
+    @Override
+    public void itemCategory(String category, String domain) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("category = " + category + "\tdomain = " + domain);
+    }
+
+    @Override
+    public void itemComments(String comments) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("comments = " + comments);
+    }
+
+    @Override
+    public void itemEnclosure(String length, String type, String url) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("length = " + length + "\ttype = " + type + "\turl = " + url);
+    }
+
+    @Override
+    public void itemGuid(String guid, boolean isPermaLink) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("guid = " + guid + "\tisPermaLink = " + isPermaLink);
+    }
+
+    @Override
+    public void itemSource(String source, String url) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("source = " + source + "\turl = " + url);
+    }
+
+    @Override
+    public void itemPubDate(Date pubDate) {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("pubDate = " + pubDate);
+    }
+
+    @Override
+    public void itemEnd() {
+        System.out.print(Thread.currentThread().getStackTrace()[1].getMethodName() + "()\t");
+        System.out.println("====================== itemEnd ======================\n");
     }
 }

@@ -12,7 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -27,19 +27,19 @@ public class ExampleUnitTest {
 
     @Test
     public void saxRssParserTest() throws IOException, ParserConfigurationException, SAXException {
-        final String url = "http://news.qq.com/newsgn/rss_newsgn.xml";
+        //final String url = "http://news.qq.com/newsgn/rss_newsgn.xml";
+        final String url = "http://news.163.com/special/00011K6L/rss_newstop.xml";
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-        SaxRssParser.getInstance().init(saxParser);
-        SaxRssParser.getInstance().parse(url, "utf-8", new TestCallback());
+        RssParser rssParser = new SaxRssParser(saxParser);
+        rssParser.parse(url, "utf-8", new TestCallback());
     }
 
     @Test
     public void xmlPullRssParserTest() throws XmlPullParserException {
-        final String url = "http://news.qq.com/newsgn/rss_newsgn.xml";
+        final String url = "http://news.163.com/special/00011K6L/rss_newstop.xml";
         XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        XmlPullRssParser.getInstance().init(xmlPullParser);
-        XmlPullRssParser.getInstance().parse(url, "utf-8", new TestCallback());
+        RssParser rssParser = new XmlPullRssParser(xmlPullParser);
+        rssParser.parse(url, "utf-8", new TestCallback());
     }
-
 
 }

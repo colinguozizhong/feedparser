@@ -47,8 +47,6 @@ public interface RssParserCallback {
 
     void generator(String generator);
 
-    ImageCallback getImageCallback();
-
     void language(String language);
 
     void lastBuildDate(Date lastBuildDate);
@@ -63,73 +61,67 @@ public interface RssParserCallback {
 
     void skipHours(List<String> skipHours);
 
-    TextInputCallBack getTextInputCallBack();
-
     void ttl(String ttl);
 
     void webMaster(String webMaster);
 
-    ItemCallback getItemCallback();
 
     void error(Throwable e);
 
     void end();
 
-    interface TextInputCallBack {
-        void begin();
+    // textInput
+    void textInputBegin();
 
-        void title(String title);
+    void textInputTitle(String title);
 
-        void name(String name);
+    void textInputName(String name);
 
-        void link(String link);
+    void textInputLink(String link);
 
-        void description(String description);
+    void textInputDescription(String description);
 
-        void end();
-    }
+    void textInputEnd();
 
-    interface ImageCallback {
-        void begin();
+    // image
+    void imageBegin();
 
-        void title(String title);
+    void imageTitle(String title);
 
-        void url(String url);
+    void imageUrl(String url);
 
-        void link(String link);
+    void imageLink(String link);
 
-        void description(String description);
+    void imageDescription(String description);
 
-        void height(String height);
+    void imageHeight(String height);
 
-        void width(String width);
+    void imageWidth(String width);
 
-        void end();
-    }
+    void imageEnd();
 
-    interface ItemCallback {
-        void begin();
+    // item
+    void itemBegin();
 
-        void title(String title);
+    void itemTitle(String title);
 
-        void description(String description);
+    void itemDescription(String description);
 
-        void link(String link);
+    void itemLink(String link);
 
-        void author(String author);
+    void itemAuthor(String author);
 
-        void category(String category, String domain);
+    void itemCategory(String category, String domain);
 
-        void comments(String comments);
+    void itemComments(String comments);
 
-        void enclosure(String length, String type, String url);
+    void itemEnclosure(String length, String type, String url);
 
-        void guid(String guid, boolean isPermaLink);
+    void itemGuid(String guid, boolean isPermaLink);
 
-        void source(String source, String url);
+    void itemSource(String source, String url);
 
-        void pubDate(Date pubDate);
+    void itemPubDate(Date pubDate);
 
-        void end();
-    }
+    void itemEnd();
 }

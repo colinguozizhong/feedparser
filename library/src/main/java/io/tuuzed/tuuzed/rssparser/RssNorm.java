@@ -1,20 +1,42 @@
+/* MIT License
+ *
+ * Copyright (c) 2016 TuuZed
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ *         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package io.tuuzed.tuuzed.rssparser;
 
 /**
  * @author TuuZed
  */
-class RssNorm {
+final class RssNorm {
     /**
      * <rss version="2.0">...</rss>
      */
-    public static final String RSS = "rss";
-    public static final String RSS_VERSION = "version";
+    static final String RSS = "rss";
+    static final String RSS_VERSION = "version";
     /**
      * <rss version="2.0">
      * <channel>...</channel>
      * </rss>
      */
-    public static final String CHANNEL = "channel";
+    static final String CHANNEL = "channel";
     /**
      * <rss version="2.0">
      * <channel>
@@ -23,7 +45,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String TITLE = "title";
+    static final String TITLE = "title";
     /**
      * <rss version="2.0">
      * <channel>
@@ -32,7 +54,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String LINK = "link";
+    static final String LINK = "link";
     /**
      * <rss version="2.0">
      * <channel>
@@ -41,7 +63,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String DESCRIPTION = "description";
+    static final String DESCRIPTION = "description";
 
     /**
      * <rss version="2.0">
@@ -51,8 +73,8 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String CATEGORY = "category";
-    public static final String CATEGORY_DOMAIN = "domain";
+    static final String CATEGORY = "category";
+    static final String CATEGORY_DOMAIN = "domain";
     /**
      * <rss version="2.0">
      * <channel>
@@ -61,12 +83,12 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String CLOUD = "cloud";
-    public static final String CLOUD_DOMAIN = "domain";
-    public static final String CLOUD_PORT = "port";
-    public static final String CLOUD_PATH = "path";
-    public static final String CLOUD_REGISTER_PROCEDURE = "registerProcedure";
-    public static final String CLOUD_PROTOCOL = "protocol";
+    static final String CLOUD = "cloud";
+    static final String CLOUD_DOMAIN = "domain";
+    static final String CLOUD_PORT = "port";
+    static final String CLOUD_PATH = "path";
+    static final String CLOUD_REGISTER_PROCEDURE = "registerProcedure";
+    static final String CLOUD_PROTOCOL = "protocol";
     /**
      * <rss version="2.0">
      * <channel>
@@ -75,7 +97,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String COPYRIGHT = "copyright";
+    static final String COPYRIGHT = "copyright";
     /**
      * <rss version="2.0">
      * <channel>
@@ -84,7 +106,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String DOCS = "docs";
+    static final String DOCS = "docs";
     /**
      * <rss version="2.0">
      * <channel>
@@ -93,7 +115,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String GENERATOR = "generator";
+    static final String GENERATOR = "generator";
     /**
      * <rss version="2.0">
      * <channel>
@@ -109,13 +131,13 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String IMAGE = "image";
-    public static final String IMAGE_TITLE = "title";
-    public static final String IMAGE_HEIGHT = "height";
-    public static final String IMAGE_WIDTH = "width";
-    public static final String IMAGE_LINK = "link";
-    public static final String IMAGE_DESCRIPTION = "description";
-    public static final String IMAGE_URL = "url";
+    static final String IMAGE = "image";
+    static final String IMAGE_TITLE = "title";
+    static final String IMAGE_HEIGHT = "height";
+    static final String IMAGE_WIDTH = "width";
+    static final String IMAGE_LINK = "link";
+    static final String IMAGE_DESCRIPTION = "description";
+    static final String IMAGE_URL = "url";
     /**
      * <rss version="2.0">
      * <channel>
@@ -124,7 +146,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String LANGUAGE = "language";
+    static final String LANGUAGE = "language";
     /**
      * <rss version="2.0">
      * <channel>
@@ -133,7 +155,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String LAST_BUILD_DATE = "lastBuildDate";
+    static final String LAST_BUILD_DATE = "lastBuildDate";
     /**
      * <rss version="2.0">
      * <channel>
@@ -142,7 +164,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String MANAGING_EDITOR = "managingEditor";
+    static final String MANAGING_EDITOR = "managingEditor";
     /**
      * <rss version="2.0">
      * <channel>
@@ -151,7 +173,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String PUB_DATE = "pubDate";
+    static final String PUB_DATE = "pubDate";
     /**
      * <rss version="2.0">
      * <channel>
@@ -160,7 +182,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String RATING = "rating";
+    static final String RATING = "rating";
 
     /**
      * /**
@@ -178,8 +200,8 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String SKIP_DAYS = "skipDays";
-    public static final String SKIP_DAYS_DAY = "day";
+    static final String SKIP_DAYS = "skipDays";
+    static final String SKIP_DAYS_DAY = "day";
 
     /**
      * /**
@@ -197,8 +219,8 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String SKIP_HOURS = "skipHours";
-    public static final String SKIP_HOURS_HOUR = "hour";
+    static final String SKIP_HOURS = "skipHours";
+    static final String SKIP_HOURS_HOUR = "hour";
     /**
      * <textinput>
      * <title>textinput title</title>
@@ -207,11 +229,11 @@ class RssNorm {
      * <description>textinput description</description>
      * </textinput>
      */
-    public static final String TEXT_INPUT = "textinput";
-    public static final String TEXT_INPUT_TITLE = "title";
-    public static final String TEXT_INPUT_NAME = "name";
-    public static final String TEXT_INPUT_LINK = "link";
-    public static final String TEXT_INPUT_DESCRIPTION = "description";
+    static final String TEXT_INPUT = "textinput";
+    static final String TEXT_INPUT_TITLE = "title";
+    static final String TEXT_INPUT_NAME = "name";
+    static final String TEXT_INPUT_LINK = "link";
+    static final String TEXT_INPUT_DESCRIPTION = "description";
 
     /**
      * /**
@@ -222,7 +244,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String TTL = "ttl";
+    static final String TTL = "ttl";
     /**
      * <rss version="2.0">
      * <channel>
@@ -231,7 +253,7 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String WEB_MASTER = "webMaster";
+    static final String WEB_MASTER = "webMaster";
 
     /**
      * <rss version="2.0">
@@ -256,21 +278,21 @@ class RssNorm {
      * ...
      * </channel>
      */
-    public static final String ITEM = "item";
-    public static final String ITEM_TITLE = "title";
-    public static final String ITEM_LINK = "link";
-    public static final String ITEM_AUTHOR = "author";
-    public static final String ITEM_CATEGORY = "category";
-    public static final String ITEM_CATEGORY_DOMAIN = "domain";
-    public static final String ITEM_PUB_DATE = "pubDate";
-    public static final String ITEM_COMMENTS = "comments";
-    public static final String ITEM_DESCRIPTION = "description";
-    public static final String ITEM_ENCLOSURE = "enclosure";
-    public static final String ITEM_ENCLOSURE_LENGTH = "length";
-    public static final String ITEM_ENCLOSURE_TYPE = "type";
-    public static final String ITEM_ENCLOSURE_URL = "url";
-    public static final String ITEM_GUID = "guid";
-    public static final String ITEM_GUID_IS_PERMA_LINK = "isPermaLink";
-    public static final String ITEM_SOURCE = "source";
-    public static final String ITEM_SOURCE_URL = "url";
+    static final String ITEM = "item";
+    static final String ITEM_TITLE = "title";
+    static final String ITEM_LINK = "link";
+    static final String ITEM_AUTHOR = "author";
+    static final String ITEM_CATEGORY = "category";
+    static final String ITEM_CATEGORY_DOMAIN = "domain";
+    static final String ITEM_PUB_DATE = "pubDate";
+    static final String ITEM_COMMENTS = "comments";
+    static final String ITEM_DESCRIPTION = "description";
+    static final String ITEM_ENCLOSURE = "enclosure";
+    static final String ITEM_ENCLOSURE_LENGTH = "length";
+    static final String ITEM_ENCLOSURE_TYPE = "type";
+    static final String ITEM_ENCLOSURE_URL = "url";
+    static final String ITEM_GUID = "guid";
+    static final String ITEM_GUID_IS_PERMA_LINK = "isPermaLink";
+    static final String ITEM_SOURCE = "source";
+    static final String ITEM_SOURCE_URL = "url";
 }
