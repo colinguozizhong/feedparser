@@ -1,24 +1,15 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+group 'io.github.github.rssparser'
+version '1.0-SNAPSHOT'
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        maven { url 'https://jitpack.io' }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'kxml2:kxml2:2.3.0'
 }

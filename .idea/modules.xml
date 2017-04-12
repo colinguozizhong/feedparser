@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RssParserSimple.iml" filepath="$PROJECT_DIR$/RssParserSimple.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/simple/simple.iml" filepath="$PROJECT_DIR$/simple/simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RssParser.iml" filepath="$PROJECT_DIR$/.idea/modules/RssParser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RssParser_main.iml" filepath="$PROJECT_DIR$/.idea/modules/RssParser_main.iml" group="RssParser" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RssParser_test.iml" filepath="$PROJECT_DIR$/.idea/modules/RssParser_test.iml" group="RssParser" />
     </modules>
   </component>
 </project>

@@ -1,1 +1,3 @@
-include ':simple', ':library'
+rootProject.name = 'RssParser'
+rootProject.name = 'RssParser'
+
