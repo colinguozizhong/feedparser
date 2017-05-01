@@ -92,7 +92,6 @@ public class XmlPullRssParser extends BaseRssParser {
                 }
                 eventType = parser.next();
             }
-            callback.end();
         } catch (XmlPullParserException | IOException e) {
             callback.error(e);
         }
@@ -102,7 +101,7 @@ public class XmlPullRssParser extends BaseRssParser {
     private void startTag(RssParserCallback callback) {
         String currentTag = mXmlPullParser.getName();
         startTag(callback, currentTag);
-        if (RssNorm.RSS.equals(currentTag)) {
+        if (RssConst.RSS.equals(currentTag)) {
             Map<String, String> attrs = new HashMap<>();
             for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                 attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
@@ -121,11 +120,11 @@ public class XmlPullRssParser extends BaseRssParser {
                 // 开始解析image
                 image(callback, currentTag);
             } else if (isBeginSkipDays) {
-                if (temp_list != null && currentTag.equals(RssNorm.SKIP_DAYS_DAY)) {
+                if (temp_list != null && currentTag.equals(RssConst.SKIP_DAYS_DAY)) {
                     temp_list.add(nextText());
                 }
             } else if (isBeginSkipHours) {
-                if (temp_list != null && currentTag.equals(RssNorm.SKIP_HOURS_HOUR)) {
+                if (temp_list != null && currentTag.equals(RssConst.SKIP_HOURS_HOUR)) {
                     temp_list.add(nextText());
                 }
             } else if (isBeginTextInput) {
@@ -146,65 +145,67 @@ public class XmlPullRssParser extends BaseRssParser {
     }
 
     private void rss(RssParserCallback callback, Map<String, String> attrs) {
-        callback.rss(attrs.get(RssNorm.RSS_VERSION));
+        callback.rss(attrs.get(RssConst.RSS_VERSION));
     }
 
     private void item(RssParserCallback callback, String currentTag, Map<String, String> attrs) {
+        String text;
         switch (currentTag) {
-            case RssNorm.ITEM_TITLE:
+            case RssConst.ITEM_TITLE:
                 callback.itemTitle(nextText());
                 break;
-            case RssNorm.ITEM_LINK:
+            case RssConst.ITEM_LINK:
                 callback.itemLink(nextText());
                 break;
-            case RssNorm.ITEM_AUTHOR:
+            case RssConst.ITEM_AUTHOR:
                 callback.itemAuthor(nextText());
                 break;
-            case RssNorm.ITEM_CATEGORY:
-                callback.itemCategory(nextText(), attrs.get(RssNorm.ITEM_CATEGORY_DOMAIN));
+            case RssConst.ITEM_CATEGORY:
+                callback.itemCategory(nextText(), attrs.get(RssConst.ITEM_CATEGORY_DOMAIN));
                 break;
-            case RssNorm.ITEM_PUB_DATE:
-                callback.itemPubDate(DateUtils.parse(nextText()));
+            case RssConst.ITEM_PUB_DATE:
+                text = nextText();
+                callback.itemPubDate(DateUtils.parse(text), text);
                 break;
-            case RssNorm.ITEM_COMMENTS:
-                callback.itemCategory(nextText(), attrs.get(RssNorm.ITEM_CATEGORY_DOMAIN));
+            case RssConst.ITEM_COMMENTS:
+                callback.itemComments(nextText());
                 break;
-            case RssNorm.ITEM_DESCRIPTION:
+            case RssConst.ITEM_DESCRIPTION:
                 callback.itemDescription(nextText());
                 break;
-            case RssNorm.ITEM_ENCLOSURE:
+            case RssConst.ITEM_ENCLOSURE:
                 callback.itemEnclosure(
-                        attrs.get(RssNorm.ITEM_ENCLOSURE_LENGTH),
-                        attrs.get(RssNorm.ITEM_ENCLOSURE_TYPE),
-                        attrs.get(RssNorm.ITEM_ENCLOSURE_URL));
+                        attrs.get(RssConst.ITEM_ENCLOSURE_LENGTH),
+                        attrs.get(RssConst.ITEM_ENCLOSURE_TYPE),
+                        attrs.get(RssConst.ITEM_ENCLOSURE_URL));
                 break;
-            case RssNorm.ITEM_GUID:
-                callback.itemGuid(nextText(), Boolean.parseBoolean(attrs.get(RssNorm.ITEM_GUID_IS_PERMA_LINK)));
+            case RssConst.ITEM_GUID:
+                callback.itemGuid(nextText(), Boolean.parseBoolean(attrs.get(RssConst.ITEM_GUID_IS_PERMA_LINK)));
                 break;
-            case RssNorm.ITEM_SOURCE:
-                callback.itemSource(nextText(), attrs.get(RssNorm.ITEM_SOURCE_URL));
+            case RssConst.ITEM_SOURCE:
+                callback.itemSource(nextText(), attrs.get(RssConst.ITEM_SOURCE_URL));
                 break;
         }
     }
 
     private void image(RssParserCallback callback, String currentTag) {
         switch (currentTag) {
-            case RssNorm.IMAGE_TITLE:
+            case RssConst.IMAGE_TITLE:
                 callback.imageTitle(nextText());
                 break;
-            case RssNorm.IMAGE_HEIGHT:
+            case RssConst.IMAGE_HEIGHT:
                 callback.imageHeight(nextText());
                 break;
-            case RssNorm.IMAGE_WIDTH:
+            case RssConst.IMAGE_WIDTH:
                 callback.imageWidth(nextText());
                 break;
-            case RssNorm.IMAGE_LINK:
+            case RssConst.IMAGE_LINK:
                 callback.imageLink(nextText());
                 break;
-            case RssNorm.IMAGE_DESCRIPTION:
+            case RssConst.IMAGE_DESCRIPTION:
                 callback.imageDescription(nextText());
                 break;
-            case RssNorm.IMAGE_URL:
+            case RssConst.IMAGE_URL:
                 callback.imageUrl(nextText());
                 break;
         }
@@ -212,71 +213,74 @@ public class XmlPullRssParser extends BaseRssParser {
 
     private void textInput(RssParserCallback callback, String currentTag) {
         switch (currentTag) {
-            case RssNorm.TEXT_INPUT_TITLE:
+            case RssConst.TEXT_INPUT_TITLE:
                 callback.textInputTitle(nextText());
                 break;
-            case RssNorm.TEXT_INPUT_LINK:
+            case RssConst.TEXT_INPUT_LINK:
                 callback.textInputLink(nextText());
                 break;
-            case RssNorm.TEXT_INPUT_DESCRIPTION:
+            case RssConst.TEXT_INPUT_DESCRIPTION:
                 callback.textInputDescription(nextText());
                 break;
-            case RssNorm.TEXT_INPUT_NAME:
+            case RssConst.TEXT_INPUT_NAME:
                 callback.textInputName(nextText());
                 break;
         }
     }
 
     private void channel(RssParserCallback callback, String currentTag, Map<String, String> attrs) {
+        String text;
         switch (currentTag) {
-            case RssNorm.TITLE:
+            case RssConst.TITLE:
                 callback.title(nextText());
                 break;
-            case RssNorm.LINK:
+            case RssConst.LINK:
                 callback.link(nextText());
                 break;
-            case RssNorm.DESCRIPTION:
+            case RssConst.DESCRIPTION:
                 callback.description(nextText());
                 break;
-            case RssNorm.CATEGORY:
-                callback.category(nextText(), attrs.get(RssNorm.CATEGORY_DOMAIN));
+            case RssConst.CATEGORY:
+                callback.category(nextText(), attrs.get(RssConst.CATEGORY_DOMAIN));
                 break;
-            case RssNorm.CLOUD:
+            case RssConst.CLOUD:
                 callback.cloud(
-                        attrs.get(RssNorm.CLOUD_DOMAIN),
-                        attrs.get(RssNorm.CLOUD_PORT),
-                        attrs.get(RssNorm.CLOUD_PATH),
-                        attrs.get(RssNorm.CLOUD_REGISTER_PROCEDURE),
-                        attrs.get(RssNorm.CLOUD_PROTOCOL));
+                        attrs.get(RssConst.CLOUD_DOMAIN),
+                        attrs.get(RssConst.CLOUD_PORT),
+                        attrs.get(RssConst.CLOUD_PATH),
+                        attrs.get(RssConst.CLOUD_REGISTER_PROCEDURE),
+                        attrs.get(RssConst.CLOUD_PROTOCOL));
                 break;
-            case RssNorm.COPYRIGHT:
+            case RssConst.COPYRIGHT:
                 callback.copyright(nextText());
                 break;
-            case RssNorm.DOCS:
+            case RssConst.DOCS:
                 callback.docs(nextText());
                 break;
-            case RssNorm.GENERATOR:
+            case RssConst.GENERATOR:
                 callback.generator(nextText());
                 break;
-            case RssNorm.LANGUAGE:
+            case RssConst.LANGUAGE:
                 callback.language(nextText());
                 break;
-            case RssNorm.LAST_BUILD_DATE:
-                callback.lastBuildDate(DateUtils.parse(nextText()));
+            case RssConst.LAST_BUILD_DATE:
+                text = nextText();
+                callback.lastBuildDate(DateUtils.parse(text), text);
                 break;
-            case RssNorm.MANAGING_EDITOR:
+            case RssConst.MANAGING_EDITOR:
                 callback.managingEditor(nextText());
                 break;
-            case RssNorm.PUB_DATE:
-                callback.pubDate(DateUtils.parse(nextText()));
+            case RssConst.PUB_DATE:
+                text = nextText();
+                callback.pubDate(DateUtils.parse(text), text);
                 break;
-            case RssNorm.RATING:
+            case RssConst.RATING:
                 callback.rating(nextText());
                 break;
-            case RssNorm.TTL:
+            case RssConst.TTL:
                 callback.ttl(nextText());
                 break;
-            case RssNorm.WEB_MASTER:
+            case RssConst.WEB_MASTER:
                 callback.webMaster(nextText());
                 break;
         }

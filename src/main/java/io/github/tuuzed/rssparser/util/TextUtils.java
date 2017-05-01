@@ -15,6 +15,12 @@
 package io.github.tuuzed.rssparser.util;
 
 public class TextUtils {
+    /**
+     * 判断是否文本内容是否为空
+     *
+     * @param text:文本内容
+     * @return :
+     */
     public static boolean isEmpty(String text) {
         return text == null || text.trim().length() == 0;
     }

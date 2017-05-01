@@ -94,9 +94,9 @@ public class DateUtils {
                 /* ISO 8601 w/o seconds */"yyyy-MM-dd'T'HH:mm'Z'",
                 /* RFC 1123 without Day Name */"dd MMM yyyy HH:mm:ss z",
                 /* RFC 1123 without Day Name and Seconds */"dd MMM yyyy HH:mm z",
-                /* Simple Date Format */"yyyy-MM-dd HH:mm:ss",
-                /* Simple Date Format */"yyyy-MM-dd",
-                /* Simple Date Format */"MMM dd, yyyy"};
+                /* Common DateFormat */"yyyy-MM-dd HH:mm:ss",
+                /* Common DateFormat */"yyyy-MM-dd",
+                /* Common DateFormat */"MMM dd, yyyy"};
 
         CUSTOM_DATE_FORMATS = new ArrayList<>();
         for (String s : possibleDateFormats) {

@@ -19,8 +19,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -51,7 +51,8 @@ public class UnitTest {
     @Test
     public void xmlPullRssParserTest() {
         String url = "http://rss.news.sohu.com/rss/pfocus.xml";
-        XmlPullRssParser.getDefault().addDateFormat(new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm:ss Z", Locale.CHINA));
+        DateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm:ss Z", Locale.CHINA);
+        XmlPullRssParser.getDefault().addDateFormat(format);
         XmlPullRssParser.getDefault().parse(url, new DefaultRssParserCallback() {
             @Override
             public void itemTitle(String title) {
@@ -66,21 +67,23 @@ public class UnitTest {
             }
 
             @Override
-            public void itemPubDate(Date pubDate) {
-                super.itemPubDate(pubDate);
-                System.out.println(pubDate);
+            public void itemPubDate(Date pubDate, String strPubDate) {
+                super.itemPubDate(pubDate, strPubDate);
+                System.out.print(pubDate);
+                System.out.print("  ");
+                System.out.println(strPubDate);
             }
 
             @Override
             public void end() {
                 super.end();
-//                System.out.println("end");
+                System.out.println("end");
             }
 
             @Override
             public void error(Throwable e) {
                 super.error(e);
-                e.printStackTrace();
+     e.printStackTrace();
             }
         });
     }

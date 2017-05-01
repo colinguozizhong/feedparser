@@ -78,7 +78,7 @@ public class DefaultRssParserCallback implements RssParserCallback {
     }
 
     @Override
-    public void lastBuildDate(Date lastBuildDate) {
+    public void lastBuildDate(Date lastBuildDate, String strLastBuildDate) {
 
     }
 
@@ -88,7 +88,7 @@ public class DefaultRssParserCallback implements RssParserCallback {
     }
 
     @Override
-    public void pubDate(Date pubDate) {
+    public void pubDate(Date pubDate, String strPubDate) {
 
     }
 
@@ -248,7 +248,7 @@ public class DefaultRssParserCallback implements RssParserCallback {
     }
 
     @Override
-    public void itemPubDate(Date pubDate) {
+    public void itemPubDate(Date pubDate, String strPubDate) {
 
     }
 

@@ -40,11 +40,11 @@ public interface RssParserCallback {
 
     void language(String language);
 
-    void lastBuildDate(Date lastBuildDate);
+    void lastBuildDate(Date lastBuildDate, String strLastBuild);
 
     void managingEditor(String managingEditor);
 
-    void pubDate(Date pubDate);
+    void pubDate(Date pubDate, String strPubDate);
 
     void rating(String rating);
 
@@ -112,7 +112,7 @@ public interface RssParserCallback {
 
     void itemSource(String source, String url);
 
-    void itemPubDate(Date pubDate);
+    void itemPubDate(Date pubDate, String strPubDate);
 
     void itemEnd();
 }

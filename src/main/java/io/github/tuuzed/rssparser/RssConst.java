@@ -17,7 +17,7 @@ package io.github.tuuzed.rssparser;
 /**
  * @author TuuZed
  */
-final class RssNorm {
+final class RssConst {
     /**
      * <rss version="2.0">...</rss>
      */

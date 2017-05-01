@@ -52,6 +52,7 @@ abstract class BaseRssParser implements RssParser {
         InputStream inputStream = null;
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setReadTimeout(5000);
             charSet[0] = CharSetUtils.getCharSet(connection.getContentType());
             if (charSet[0] == null) {
                 inputStream = CharSetUtils.getCharSet(connection.getInputStream(), charSet);
@@ -79,30 +80,30 @@ abstract class BaseRssParser implements RssParser {
      */
     protected void startTag(RssParserCallback callback, String tagName) {
         switch (tagName) {
-            case RssNorm.RSS:
+            case RssConst.RSS:
                 callback.begin();
                 isBeginRss = true;
                 break;
-            case RssNorm.CHANNEL:
+            case RssConst.CHANNEL:
                 isBeginChannel = true;
                 break;
-            case RssNorm.IMAGE:
+            case RssConst.IMAGE:
                 callback.imageBegin();
                 isBeginImage = true;
                 break;
-            case RssNorm.SKIP_DAYS:
+            case RssConst.SKIP_DAYS:
                 isBeginSkipDays = true;
                 temp_list = new ArrayList<>();
                 break;
-            case RssNorm.SKIP_HOURS:
+            case RssConst.SKIP_HOURS:
                 isBeginSkipHours = true;
                 temp_list = new ArrayList<>();
                 break;
-            case RssNorm.TEXT_INPUT:
+            case RssConst.TEXT_INPUT:
                 callback.textInputBegin();
                 isBeginTextInput = true;
                 break;
-            case RssNorm.ITEM:
+            case RssConst.ITEM:
                 callback.itemBegin();
                 isBeginItem = true;
                 break;
@@ -117,30 +118,30 @@ abstract class BaseRssParser implements RssParser {
      */
     protected void endTag(RssParserCallback callback, String tagName) {
         switch (tagName) {
-            case RssNorm.RSS:
+            case RssConst.RSS:
                 isBeginRss = false;
                 callback.end();
                 break;
-            case RssNorm.CHANNEL:
+            case RssConst.CHANNEL:
                 isBeginChannel = false;
                 break;
-            case RssNorm.IMAGE:
+            case RssConst.IMAGE:
                 callback.imageEnd();
                 isBeginImage = false;
                 break;
-            case RssNorm.SKIP_DAYS:
+            case RssConst.SKIP_DAYS:
                 isBeginSkipDays = false;
                 callback.skipDays(temp_list);
                 break;
-            case RssNorm.SKIP_HOURS:
+            case RssConst.SKIP_HOURS:
                 isBeginSkipHours = false;
-                callback.skipDays(temp_list);
+                callback.skipHours(temp_list);
                 break;
-            case RssNorm.TEXT_INPUT:
+            case RssConst.TEXT_INPUT:
                 callback.textInputEnd();
                 isBeginTextInput = false;
                 break;
-            case RssNorm.ITEM:
+            case RssConst.ITEM:
                 callback.itemEnd();
                 isBeginItem = false;
                 break;
@@ -156,6 +157,7 @@ abstract class BaseRssParser implements RssParser {
     public void addDateFormat(DateFormat format) {
         DateUtils.addDateFormat(format);
     }
+
     /**
      * 安全关闭可关闭的对象
      *
