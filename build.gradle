@@ -1,9 +1,21 @@
 group 'io.github.github.rssparser'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'java'
 
+group = 'com.github.TuuZed'
+
 sourceCompatibility = 1.7
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+    }
+}
 
 repositories {
     mavenCentral()
@@ -12,4 +24,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'kxml2:kxml2:2.3.0'
+}
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
