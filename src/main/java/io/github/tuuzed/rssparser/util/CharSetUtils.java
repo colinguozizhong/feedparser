@@ -38,6 +38,14 @@ public class CharSetUtils {
     }
 
 
+    /**
+     * 获取输入流可能的编码
+     *
+     * @param is
+     * @param charSet
+     * @return
+     * @throws IOException
+     */
     public static InputStream getCharSet(InputStream is, String[] charSet) throws IOException {
         StringBuilder sb = new StringBuilder();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

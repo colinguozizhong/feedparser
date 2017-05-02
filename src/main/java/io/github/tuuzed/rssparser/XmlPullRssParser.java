@@ -15,42 +15,87 @@
 package io.github.tuuzed.rssparser;
 
 import io.github.tuuzed.rssparser.callback.RssParserCallback;
+import io.github.tuuzed.rssparser.util.CharSetUtils;
 import io.github.tuuzed.rssparser.util.DateUtils;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class XmlPullRssParser extends BaseRssParser {
+class XmlPullRssParser implements RssParser {
+
+    private boolean isBeginRss = false;
+    private boolean isBeginChannel = false;
+    private boolean isBeginImage = false;
+    private boolean isBeginTextInput = false;
+    private boolean isBeginSkipDays = false;
+    private boolean isBeginSkipHours = false;
+    private boolean isBeginItem = false;
+    private List<String> temp_list = null;
     private XmlPullParser mXmlPullParser;
-    private static RssParser sDefault;
+    private OkHttpClient mHttpClient;
+    private String mDefCharSet;
 
-    public static XmlPullParser getXmlPullParser() throws XmlPullParserException {
-        return XmlPullParserFactory.newInstance().newPullParser();
+    XmlPullRssParser(RssParserBuilder builder) {
+        mHttpClient = builder.okHttpClient;
+        mDefCharSet = builder.defCharSet;
+        mXmlPullParser = builder.xmlPullParser;
     }
 
-    public XmlPullRssParser(XmlPullParser xmlPullParser) {
-        mXmlPullParser = xmlPullParser;
+    @Override
+    public void parse(String url, RssParserCallback callback) {
+        parse(url, mDefCharSet, callback);
     }
 
-    public static RssParser getDefault() {
-        if (sDefault == null) {
-            synchronized (XmlPullRssParser.class) {
-                if (sDefault == null) {
-                    try {
-                        sDefault = new XmlPullRssParser(getXmlPullParser());
-                    } catch (XmlPullParserException e) {
-                        throw new RuntimeException(e);
-                    }
+    @Override
+    public void parse(String url, String defCharSet, RssParserCallback callback) {
+        if (mHttpClient != null) {
+            Request request = new Request.Builder().url(url).get().build();
+            Call call = mHttpClient.newCall(request);
+            try {
+                Response response = call.execute();
+                parse(response.body().charStream(), callback);
+            } catch (IOException e) {
+                callback.error(e);
+            }
+        } else {
+            String[] charSet = new String[1];
+            InputStream inputStream = null;
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setReadTimeout(5000);
+                charSet[0] = CharSetUtils.getCharSet(connection.getContentType());
+                if (charSet[0] == null) {
+                    inputStream = CharSetUtils.getCharSet(connection.getInputStream(), charSet);
                 }
+                if (charSet[0] == null) {
+                    charSet[0] = defCharSet;
+                }
+                if (inputStream == null) {
+                    inputStream = connection.getInputStream();
+                }
+                parse(inputStream, charSet[0], callback);
+            } catch (IOException e) {
+                callback.error(e);
+            } finally {
+                safeClose(inputStream);
             }
         }
-        return sDefault;
     }
 
     @Override
@@ -77,7 +122,13 @@ public class XmlPullRssParser extends BaseRssParser {
         }
     }
 
-    // 解析Rss
+
+    /**
+     * 解析Rss
+     *
+     * @param parser
+     * @param callback
+     */
     private void parse(XmlPullParser parser, RssParserCallback callback) {
         try {
             int eventType = parser.getEventType();
@@ -97,11 +148,43 @@ public class XmlPullRssParser extends BaseRssParser {
         }
     }
 
-    // 开始标签
+    /**
+     * 开始标签
+     *
+     * @param callback
+     */
     private void startTag(RssParserCallback callback) {
-        String currentTag = mXmlPullParser.getName();
-        startTag(callback, currentTag);
-        if (RssConst.RSS.equals(currentTag)) {
+        String tagName = mXmlPullParser.getName();
+        switch (tagName) {
+            case RssConst.RSS:
+                callback.begin();
+                isBeginRss = true;
+                break;
+            case RssConst.CHANNEL:
+                isBeginChannel = true;
+                break;
+            case RssConst.IMAGE:
+                callback.imageBegin();
+                isBeginImage = true;
+                break;
+            case RssConst.SKIP_DAYS:
+                isBeginSkipDays = true;
+                temp_list = new ArrayList<>();
+                break;
+            case RssConst.SKIP_HOURS:
+                isBeginSkipHours = true;
+                temp_list = new ArrayList<>();
+                break;
+            case RssConst.TEXT_INPUT:
+                callback.textInputBegin();
+                isBeginTextInput = true;
+                break;
+            case RssConst.ITEM:
+                callback.itemBegin();
+                isBeginItem = true;
+                break;
+        }
+        if (RssConst.RSS.equals(tagName)) {
             Map<String, String> attrs = new HashMap<>();
             for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                 attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
@@ -115,34 +198,68 @@ public class XmlPullRssParser extends BaseRssParser {
                 for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                     attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
                 }
-                item(callback, currentTag, attrs);
+                item(callback, tagName, attrs);
             } else if (isBeginImage) {
                 // 开始解析image
-                image(callback, currentTag);
+                image(callback, tagName);
             } else if (isBeginSkipDays) {
-                if (temp_list != null && currentTag.equals(RssConst.SKIP_DAYS_DAY)) {
+                if (temp_list != null && tagName.equals(RssConst.SKIP_DAYS_DAY)) {
                     temp_list.add(nextText());
                 }
             } else if (isBeginSkipHours) {
-                if (temp_list != null && currentTag.equals(RssConst.SKIP_HOURS_HOUR)) {
+                if (temp_list != null && tagName.equals(RssConst.SKIP_HOURS_HOUR)) {
                     temp_list.add(nextText());
                 }
             } else if (isBeginTextInput) {
-                textInput(callback, currentTag);
+                textInput(callback, tagName);
             } else {
                 Map<String, String> attrs = new HashMap<>();
                 for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                     attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
                 }
-                channel(callback, currentTag, attrs);
+                channel(callback, tagName, attrs);
             }
         }
     }
 
-    // 结束标签
+    /**
+     * 结束标签
+     *
+     * @param callback :回调
+     */
     private void endTag(RssParserCallback callback) {
-        endTag(callback, mXmlPullParser.getName());
+        String tagName = mXmlPullParser.getName();
+        switch (tagName) {
+            case RssConst.RSS:
+                isBeginRss = false;
+                callback.end();
+                break;
+            case RssConst.CHANNEL:
+                isBeginChannel = false;
+                break;
+            case RssConst.IMAGE:
+                callback.imageEnd();
+                isBeginImage = false;
+                break;
+            case RssConst.SKIP_DAYS:
+                isBeginSkipDays = false;
+                callback.skipDays(temp_list);
+                break;
+            case RssConst.SKIP_HOURS:
+                isBeginSkipHours = false;
+                callback.skipHours(temp_list);
+                break;
+            case RssConst.TEXT_INPUT:
+                callback.textInputEnd();
+                isBeginTextInput = false;
+                break;
+            case RssConst.ITEM:
+                callback.itemEnd();
+                isBeginItem = false;
+                break;
+        }
     }
+
 
     private void rss(RssParserCallback callback, Map<String, String> attrs) {
         callback.rss(attrs.get(RssConst.RSS_VERSION));
@@ -287,9 +404,9 @@ public class XmlPullRssParser extends BaseRssParser {
     }
 
     /**
-     * 取得内容
+     * 取得文本
      *
-     * @return :取得内容
+     * @return :取得文本
      */
     private String nextText() {
         try {
@@ -297,5 +414,30 @@ public class XmlPullRssParser extends BaseRssParser {
         } catch (XmlPullParserException | IOException e) {
             return null;
         }
+    }
+
+    /**
+     * 安全关闭可关闭的对象
+     *
+     * @param closeable :可关闭的对象
+     */
+    private void safeClose(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 添加时间格式
+     *
+     * @param format :时间格式
+     */
+    @Override
+    public void addDateFormat(DateFormat format) {
+        DateUtils.addDateFormat(format);
     }
 }

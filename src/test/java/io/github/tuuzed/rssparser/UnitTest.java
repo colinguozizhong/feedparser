@@ -15,7 +15,11 @@
 package io.github.tuuzed.rssparser;
 
 import io.github.tuuzed.rssparser.callback.DefaultRssParserCallback;
+import okhttp3.OkHttpClient;
 import org.junit.Test;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -49,11 +53,17 @@ public class UnitTest {
     }
 
     @Test
-    public void xmlPullRssParserTest() {
+    public void xmlPullRssParserTest() throws XmlPullParserException {
         String url = "http://rss.news.sohu.com/rss/pfocus.xml";
         DateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm:ss Z", Locale.CHINA);
-        XmlPullRssParser.getDefault().addDateFormat(format);
-        XmlPullRssParser.getDefault().parse(url, new DefaultRssParserCallback() {
+        XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
+        RssParser rssParser = new RssParserBuilder()
+                .setXmlPullParser(xmlPullParser)
+                .setOkHttpClient(new OkHttpClient())
+                .setDefCharSet("utf-8")
+                .build();
+        rssParser.addDateFormat(format);
+        rssParser.parse(url, new DefaultRssParserCallback() {
             @Override
             public void itemTitle(String title) {
                 super.itemTitle(title);
@@ -83,7 +93,7 @@ public class UnitTest {
             @Override
             public void error(Throwable e) {
                 super.error(e);
-     e.printStackTrace();
+                e.printStackTrace();
             }
         });
     }
