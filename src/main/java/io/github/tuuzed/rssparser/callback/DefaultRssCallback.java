@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author TuuZed
  */
-public class DefaultRssParserCallback implements RssParserCallback {
+public class DefaultRssCallback implements RssCallback {
 
     @Override
     public void begin() {

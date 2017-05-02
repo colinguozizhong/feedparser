@@ -1,2 +1,0 @@
-Manifest-Version: 1.1.1
-KXML2-Version: 2.3.0

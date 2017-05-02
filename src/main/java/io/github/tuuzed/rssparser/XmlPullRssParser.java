@@ -14,7 +14,7 @@
  */
 package io.github.tuuzed.rssparser;
 
-import io.github.tuuzed.rssparser.callback.RssParserCallback;
+import io.github.tuuzed.rssparser.callback.RssCallback;
 import io.github.tuuzed.rssparser.util.CharSetUtils;
 import io.github.tuuzed.rssparser.util.DateUtils;
 import okhttp3.Call;
@@ -23,7 +23,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -58,12 +57,12 @@ class XmlPullRssParser implements RssParser {
     }
 
     @Override
-    public void parse(String url, RssParserCallback callback) {
+    public void parse(String url, RssCallback callback) {
         parse(url, mDefCharSet, callback);
     }
 
     @Override
-    public void parse(String url, String defCharSet, RssParserCallback callback) {
+    public void parse(String url, String defCharSet, RssCallback callback) {
         if (mHttpClient != null) {
             Request request = new Request.Builder().url(url).get().build();
             Call call = mHttpClient.newCall(request);
@@ -99,7 +98,7 @@ class XmlPullRssParser implements RssParser {
     }
 
     @Override
-    public void parse(Reader reader, RssParserCallback callback) {
+    public void parse(Reader reader, RssCallback callback) {
         try {
             mXmlPullParser.setInput(reader);
             parse(mXmlPullParser, callback);
@@ -111,7 +110,7 @@ class XmlPullRssParser implements RssParser {
     }
 
     @Override
-    public void parse(InputStream is, String charSet, RssParserCallback callback) {
+    public void parse(InputStream is, String charSet, RssCallback callback) {
         try {
             mXmlPullParser.setInput(is, charSet);
             parse(mXmlPullParser, callback);
@@ -122,14 +121,13 @@ class XmlPullRssParser implements RssParser {
         }
     }
 
+    @Override
+    public void addDateFormat(DateFormat format) {
+        DateUtils.addDateFormat(format);
+    }
 
-    /**
-     * 解析Rss
-     *
-     * @param parser
-     * @param callback
-     */
-    private void parse(XmlPullParser parser, RssParserCallback callback) {
+    // 解析 Rss
+    private void parse(XmlPullParser parser, RssCallback callback) {
         try {
             int eventType = parser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -143,58 +141,47 @@ class XmlPullRssParser implements RssParser {
                 }
                 eventType = parser.next();
             }
-        } catch (XmlPullParserException | IOException e) {
+        } catch (XmlPullParserException e) {
+            callback.error(e);
+        } catch (IOException e) {
             callback.error(e);
         }
     }
 
-    /**
-     * 开始标签
-     *
-     * @param callback
-     */
-    private void startTag(RssParserCallback callback) {
+
+    // 开始标签时
+    private void startTag(RssCallback callback) {
         String tagName = mXmlPullParser.getName();
-        switch (tagName) {
-            case RssConst.RSS:
-                callback.begin();
-                isBeginRss = true;
-                break;
-            case RssConst.CHANNEL:
-                isBeginChannel = true;
-                break;
-            case RssConst.IMAGE:
-                callback.imageBegin();
-                isBeginImage = true;
-                break;
-            case RssConst.SKIP_DAYS:
-                isBeginSkipDays = true;
-                temp_list = new ArrayList<>();
-                break;
-            case RssConst.SKIP_HOURS:
-                isBeginSkipHours = true;
-                temp_list = new ArrayList<>();
-                break;
-            case RssConst.TEXT_INPUT:
-                callback.textInputBegin();
-                isBeginTextInput = true;
-                break;
-            case RssConst.ITEM:
-                callback.itemBegin();
-                isBeginItem = true;
-                break;
-        }
         if (RssConst.RSS.equals(tagName)) {
-            Map<String, String> attrs = new HashMap<>();
+            callback.begin();
+            isBeginRss = true;
+            Map<String, String> attrs = new HashMap<String, String>();
             for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                 attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
             }
             rss(callback, attrs);
+        } else if (RssConst.CHANNEL.equals(tagName)) {
+            isBeginChannel = true;
+        } else if (RssConst.IMAGE.equals(tagName)) {
+            callback.imageBegin();
+            isBeginImage = true;
+        } else if (RssConst.SKIP_DAYS.equals(tagName)) {
+            isBeginSkipDays = true;
+            temp_list = new ArrayList<String>();
+        } else if (RssConst.SKIP_HOURS.equals(tagName)) {
+            isBeginSkipHours = true;
+            temp_list = new ArrayList<String>();
+        } else if (RssConst.TEXT_INPUT.equals(tagName)) {
+            callback.textInputBegin();
+            isBeginTextInput = true;
+        } else if (RssConst.ITEM.equals(tagName)) {
+            callback.itemBegin();
+            isBeginItem = true;
         }
         if (isBeginChannel) {
             if (isBeginItem) {
                 // 开始解析item
-                Map<String, String> attrs = new HashMap<>();
+                Map<String, String> attrs = new HashMap<String, String>();
                 for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                     attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
                 }
@@ -213,7 +200,7 @@ class XmlPullRssParser implements RssParser {
             } else if (isBeginTextInput) {
                 textInput(callback, tagName);
             } else {
-                Map<String, String> attrs = new HashMap<>();
+                Map<String, String> attrs = new HashMap<String, String>();
                 for (int i = 0; i < mXmlPullParser.getAttributeCount(); i++) {
                     attrs.put(mXmlPullParser.getAttributeName(i), mXmlPullParser.getAttributeValue(i).trim());
                 }
@@ -222,205 +209,150 @@ class XmlPullRssParser implements RssParser {
         }
     }
 
-    /**
-     * 结束标签
-     *
-     * @param callback :回调
-     */
-    private void endTag(RssParserCallback callback) {
+    // 结束标签时
+    private void endTag(RssCallback callback) {
         String tagName = mXmlPullParser.getName();
-        switch (tagName) {
-            case RssConst.RSS:
-                isBeginRss = false;
-                callback.end();
-                break;
-            case RssConst.CHANNEL:
-                isBeginChannel = false;
-                break;
-            case RssConst.IMAGE:
-                callback.imageEnd();
-                isBeginImage = false;
-                break;
-            case RssConst.SKIP_DAYS:
-                isBeginSkipDays = false;
-                callback.skipDays(temp_list);
-                break;
-            case RssConst.SKIP_HOURS:
-                isBeginSkipHours = false;
-                callback.skipHours(temp_list);
-                break;
-            case RssConst.TEXT_INPUT:
-                callback.textInputEnd();
-                isBeginTextInput = false;
-                break;
-            case RssConst.ITEM:
-                callback.itemEnd();
-                isBeginItem = false;
-                break;
+        if (RssConst.RSS.equals(tagName)) {
+            isBeginRss = false;
+            callback.end();
+        } else if (RssConst.CHANNEL.equals(tagName)) {
+            isBeginChannel = false;
+        } else if (RssConst.IMAGE.equals(tagName)) {
+            callback.imageEnd();
+            isBeginImage = false;
+        } else if (RssConst.SKIP_DAYS.equals(tagName)) {
+            isBeginSkipDays = false;
+            callback.skipDays(temp_list);
+        } else if (RssConst.SKIP_HOURS.equals(tagName)) {
+            isBeginSkipHours = false;
+            callback.skipHours(temp_list);
+        } else if (RssConst.TEXT_INPUT.equals(tagName)) {
+            isBeginTextInput = false;
+            callback.textInputEnd();
+        } else if (RssConst.ITEM.equals(tagName)) {
+            isBeginItem = false;
+            callback.itemEnd();
         }
     }
 
 
-    private void rss(RssParserCallback callback, Map<String, String> attrs) {
+    private void rss(RssCallback callback, Map<String, String> attrs) {
         callback.rss(attrs.get(RssConst.RSS_VERSION));
     }
 
-    private void item(RssParserCallback callback, String currentTag, Map<String, String> attrs) {
-        String text;
-        switch (currentTag) {
-            case RssConst.ITEM_TITLE:
-                callback.itemTitle(nextText());
-                break;
-            case RssConst.ITEM_LINK:
-                callback.itemLink(nextText());
-                break;
-            case RssConst.ITEM_AUTHOR:
-                callback.itemAuthor(nextText());
-                break;
-            case RssConst.ITEM_CATEGORY:
-                callback.itemCategory(nextText(), attrs.get(RssConst.ITEM_CATEGORY_DOMAIN));
-                break;
-            case RssConst.ITEM_PUB_DATE:
-                text = nextText();
-                callback.itemPubDate(DateUtils.parse(text), text);
-                break;
-            case RssConst.ITEM_COMMENTS:
-                callback.itemComments(nextText());
-                break;
-            case RssConst.ITEM_DESCRIPTION:
-                callback.itemDescription(nextText());
-                break;
-            case RssConst.ITEM_ENCLOSURE:
-                callback.itemEnclosure(
-                        attrs.get(RssConst.ITEM_ENCLOSURE_LENGTH),
-                        attrs.get(RssConst.ITEM_ENCLOSURE_TYPE),
-                        attrs.get(RssConst.ITEM_ENCLOSURE_URL));
-                break;
-            case RssConst.ITEM_GUID:
-                callback.itemGuid(nextText(), Boolean.parseBoolean(attrs.get(RssConst.ITEM_GUID_IS_PERMA_LINK)));
-                break;
-            case RssConst.ITEM_SOURCE:
-                callback.itemSource(nextText(), attrs.get(RssConst.ITEM_SOURCE_URL));
-                break;
+    private void channel(RssCallback callback, String tagName, Map<String, String> attrs) {
+        if (RssConst.TITLE.equals(tagName)) {
+            callback.title(nextText());
+        } else if (RssConst.LINK.equals(tagName)) {
+            callback.link(nextText());
+        } else if (RssConst.DESCRIPTION.equals(tagName)) {
+            callback.description(nextText());
+        } else if (RssConst.CATEGORY.equals(tagName)) {
+            callback.category(nextText(), attrs.get(RssConst.CATEGORY_DOMAIN));
+        } else if (RssConst.CLOUD.equals(tagName)) {
+            callback.cloud(
+                    attrs.get(RssConst.CLOUD_DOMAIN),
+                    attrs.get(RssConst.CLOUD_PORT),
+                    attrs.get(RssConst.CLOUD_PATH),
+                    attrs.get(RssConst.CLOUD_REGISTER_PROCEDURE),
+                    attrs.get(RssConst.CLOUD_PROTOCOL));
+        } else if (RssConst.COPYRIGHT.equals(tagName)) {
+            callback.copyright(nextText());
+        } else if (RssConst.DOCS.equals(tagName)) {
+            callback.docs(nextText());
+        } else if (RssConst.GENERATOR.equals(tagName)) {
+            callback.generator(nextText());
+        } else if (RssConst.LANGUAGE.equals(tagName)) {
+            callback.language(nextText());
+        } else if (RssConst.LAST_BUILD_DATE.equals(tagName)) {
+            String text = nextText();
+            callback.lastBuildDate(DateUtils.parse(text), text);
+        } else if (RssConst.MANAGING_EDITOR.equals(tagName)) {
+            callback.managingEditor(nextText());
+        } else if (RssConst.PUB_DATE.equals(tagName)) {
+            String text = nextText();
+            callback.pubDate(DateUtils.parse(text), text);
+        } else if (RssConst.RATING.equals(tagName)) {
+            callback.rating(nextText());
+        } else if (RssConst.TTL.equals(tagName)) {
+            callback.ttl(nextText());
+        } else if (RssConst.WEB_MASTER.equals(tagName)) {
+            callback.webMaster(nextText());
         }
     }
 
-    private void image(RssParserCallback callback, String currentTag) {
-        switch (currentTag) {
-            case RssConst.IMAGE_TITLE:
-                callback.imageTitle(nextText());
-                break;
-            case RssConst.IMAGE_HEIGHT:
-                callback.imageHeight(nextText());
-                break;
-            case RssConst.IMAGE_WIDTH:
-                callback.imageWidth(nextText());
-                break;
-            case RssConst.IMAGE_LINK:
-                callback.imageLink(nextText());
-                break;
-            case RssConst.IMAGE_DESCRIPTION:
-                callback.imageDescription(nextText());
-                break;
-            case RssConst.IMAGE_URL:
-                callback.imageUrl(nextText());
-                break;
+    private void image(RssCallback callback, String tagName) {
+        if (RssConst.IMAGE_TITLE.equals(tagName)) {
+            callback.imageTitle(nextText());
+        } else if (RssConst.IMAGE_HEIGHT.equals(tagName)) {
+            callback.imageHeight(nextText());
+        } else if (RssConst.IMAGE_WIDTH.equals(tagName)) {
+            callback.imageWidth(nextText());
+        } else if (RssConst.IMAGE_LINK.equals(tagName)) {
+            callback.imageLink(nextText());
+        } else if (RssConst.IMAGE_DESCRIPTION.equals(tagName)) {
+            callback.imageDescription(nextText());
+        } else if (RssConst.IMAGE_URL.equals(tagName)) {
+            callback.imageUrl(nextText());
         }
     }
 
-    private void textInput(RssParserCallback callback, String currentTag) {
-        switch (currentTag) {
-            case RssConst.TEXT_INPUT_TITLE:
-                callback.textInputTitle(nextText());
-                break;
-            case RssConst.TEXT_INPUT_LINK:
-                callback.textInputLink(nextText());
-                break;
-            case RssConst.TEXT_INPUT_DESCRIPTION:
-                callback.textInputDescription(nextText());
-                break;
-            case RssConst.TEXT_INPUT_NAME:
-                callback.textInputName(nextText());
-                break;
+    private void textInput(RssCallback callback, String tagName) {
+        if (RssConst.TEXT_INPUT_TITLE.equals(tagName)) {
+            callback.textInputTitle(nextText());
+        } else if (RssConst.TEXT_INPUT_LINK.equals(tagName)) {
+            callback.textInputLink(nextText());
+        } else if (RssConst.TEXT_INPUT_LINK.equals(tagName)) {
+            callback.textInputLink(nextText());
+        } else if (RssConst.TEXT_INPUT_DESCRIPTION.equals(tagName)) {
+            callback.textInputDescription(nextText());
+        } else if (RssConst.TEXT_INPUT_NAME.equals(tagName)) {
+            callback.textInputName(nextText());
         }
     }
 
-    private void channel(RssParserCallback callback, String currentTag, Map<String, String> attrs) {
-        String text;
-        switch (currentTag) {
-            case RssConst.TITLE:
-                callback.title(nextText());
-                break;
-            case RssConst.LINK:
-                callback.link(nextText());
-                break;
-            case RssConst.DESCRIPTION:
-                callback.description(nextText());
-                break;
-            case RssConst.CATEGORY:
-                callback.category(nextText(), attrs.get(RssConst.CATEGORY_DOMAIN));
-                break;
-            case RssConst.CLOUD:
-                callback.cloud(
-                        attrs.get(RssConst.CLOUD_DOMAIN),
-                        attrs.get(RssConst.CLOUD_PORT),
-                        attrs.get(RssConst.CLOUD_PATH),
-                        attrs.get(RssConst.CLOUD_REGISTER_PROCEDURE),
-                        attrs.get(RssConst.CLOUD_PROTOCOL));
-                break;
-            case RssConst.COPYRIGHT:
-                callback.copyright(nextText());
-                break;
-            case RssConst.DOCS:
-                callback.docs(nextText());
-                break;
-            case RssConst.GENERATOR:
-                callback.generator(nextText());
-                break;
-            case RssConst.LANGUAGE:
-                callback.language(nextText());
-                break;
-            case RssConst.LAST_BUILD_DATE:
-                text = nextText();
-                callback.lastBuildDate(DateUtils.parse(text), text);
-                break;
-            case RssConst.MANAGING_EDITOR:
-                callback.managingEditor(nextText());
-                break;
-            case RssConst.PUB_DATE:
-                text = nextText();
-                callback.pubDate(DateUtils.parse(text), text);
-                break;
-            case RssConst.RATING:
-                callback.rating(nextText());
-                break;
-            case RssConst.TTL:
-                callback.ttl(nextText());
-                break;
-            case RssConst.WEB_MASTER:
-                callback.webMaster(nextText());
-                break;
+    private void item(RssCallback callback, String tagName, Map<String, String> attrs) {
+        if (RssConst.IMAGE_TITLE.equals(tagName)) {
+            callback.itemTitle(nextText());
+        } else if (RssConst.ITEM_LINK.equals(tagName)) {
+            callback.itemLink(nextText());
+        } else if (RssConst.ITEM_AUTHOR.equals(tagName)) {
+            callback.itemAuthor(nextText());
+        } else if (RssConst.ITEM_CATEGORY.equals(tagName)) {
+            callback.itemCategory(nextText(), attrs.get(RssConst.ITEM_CATEGORY_DOMAIN));
+        } else if (RssConst.ITEM_PUB_DATE.equals(tagName)) {
+            String text = nextText();
+            callback.itemPubDate(DateUtils.parse(text), text);
+        } else if (RssConst.ITEM_COMMENTS.equals(tagName)) {
+            callback.itemComments(nextText());
+        } else if (RssConst.ITEM_DESCRIPTION.equals(tagName)) {
+            callback.itemDescription(nextText());
+        } else if (RssConst.ITEM_ENCLOSURE.equals(tagName)) {
+            callback.itemEnclosure(
+                    attrs.get(RssConst.ITEM_ENCLOSURE_LENGTH),
+                    attrs.get(RssConst.ITEM_ENCLOSURE_TYPE),
+                    attrs.get(RssConst.ITEM_ENCLOSURE_URL));
+        } else if (RssConst.ITEM_GUID.equals(tagName)) {
+            callback.itemGuid(nextText(), Boolean.parseBoolean(attrs.get(RssConst.ITEM_GUID_IS_PERMA_LINK)));
+        } else if (RssConst.ITEM_SOURCE.equals(tagName)) {
+            callback.itemSource(nextText(), attrs.get(RssConst.ITEM_SOURCE_URL));
         }
     }
 
-    /**
-     * 取得文本
-     *
-     * @return :取得文本
-     */
+
+    // 取得文本
     private String nextText() {
         try {
             return mXmlPullParser.nextText().trim();
-        } catch (XmlPullParserException | IOException e) {
-            return null;
+        } catch (XmlPullParserException e) {
+            // pass
+        } catch (IOException e) {
+            // pass
         }
+        return null;
     }
 
-    /**
-     * 安全关闭可关闭的对象
-     *
-     * @param closeable :可关闭的对象
-     */
+    // 安全关闭可关闭的对象
     private void safeClose(Closeable closeable) {
         if (closeable != null) {
             try {
@@ -429,15 +361,5 @@ class XmlPullRssParser implements RssParser {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 添加时间格式
-     *
-     * @param format :时间格式
-     */
-    @Override
-    public void addDateFormat(DateFormat format) {
-        DateUtils.addDateFormat(format);
     }
 }

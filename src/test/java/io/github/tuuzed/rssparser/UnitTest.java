@@ -14,7 +14,7 @@
  */
 package io.github.tuuzed.rssparser;
 
-import io.github.tuuzed.rssparser.callback.DefaultRssParserCallback;
+import io.github.tuuzed.rssparser.callback.DefaultRssCallback;
 import okhttp3.OkHttpClient;
 import org.junit.Test;
 import org.xmlpull.v1.XmlPullParser;
@@ -63,7 +63,7 @@ public class UnitTest {
                 .setDefCharSet("utf-8")
                 .build();
         rssParser.addDateFormat(format);
-        rssParser.parse(url, new DefaultRssParserCallback() {
+        rssParser.parse(url, new DefaultRssCallback() {
             @Override
             public void itemTitle(String title) {
                 super.itemTitle(title);

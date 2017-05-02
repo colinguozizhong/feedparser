@@ -17,7 +17,7 @@ package io.github.tuuzed.rssparser.callback;
 import java.util.Date;
 import java.util.List;
 
-public interface RssParserCallback {
+public interface RssCallback {
     void begin();
 
     void rss(String version);

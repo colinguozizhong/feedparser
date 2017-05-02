@@ -18,20 +18,25 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.text.DateFormat;
 
-import io.github.tuuzed.rssparser.callback.RssParserCallback;
+import io.github.tuuzed.rssparser.callback.RssCallback;
 
 /**
  * @author TuuZed
  */
 public interface RssParser {
 
-    void parse(String url, RssParserCallback callback);
+    void parse(String url, RssCallback callback);
 
-    void parse(String url, String defCharSet, RssParserCallback callback);
+    void parse(String url, String defCharSet, RssCallback callback);
 
-    void parse(Reader reader, RssParserCallback callback);
+    void parse(Reader reader, RssCallback callback);
 
-    void parse(InputStream is, String charSet, RssParserCallback callback);
+    void parse(InputStream is, String charSet, RssCallback callback);
 
+    /**
+     * 添加时间格式
+     *
+     * @param format :时间格式
+     */
     void addDateFormat(DateFormat format);
 }
