@@ -13,6 +13,9 @@ bin/
 gen/
 out/
 
+# Maven
+target/
+
 # Gradle files
 .gradle/
 build/
