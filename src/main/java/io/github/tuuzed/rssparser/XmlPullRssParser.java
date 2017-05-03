@@ -66,11 +66,15 @@ class XmlPullRssParser implements RssParser {
         if (mHttpClient != null) {
             Request request = new Request.Builder().url(url).get().build();
             Call call = mHttpClient.newCall(request);
+            Response response = null;
             try {
-                Response response = call.execute();
+                response = call.execute();
                 parse(response.body().charStream(), callback);
             } catch (IOException e) {
                 callback.error(e);
+            } finally {
+                safeClose(response);
+                call.cancel();
             }
         } else {
             String[] charSet = new String[1];
