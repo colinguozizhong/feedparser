@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FeedParser" />
+        <module name="feedparser" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FeedParser" target="1.6" />
+      <module name="feedparser" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

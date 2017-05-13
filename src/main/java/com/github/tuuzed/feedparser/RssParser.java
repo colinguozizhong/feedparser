@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RssParser extends AbstractParser {
+class RssParser extends AbstractParser {
     private boolean isBeginChannel = false;
     private boolean isBeginImage = false;
     private boolean isBeginTextInput = false;

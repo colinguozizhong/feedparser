@@ -19,7 +19,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 class XmlParser {
-    public static void parse(XmlPullParser xmlPullParser, Callback callback) {
+    static void parse(XmlPullParser xmlPullParser, Callback callback) {
         try {
             int eventType = xmlPullParser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {

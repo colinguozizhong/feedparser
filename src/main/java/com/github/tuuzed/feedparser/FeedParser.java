@@ -31,7 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class FeedParser {
-    private final Logger fLogger;
+    private static final Logger sLogger = Logger.getLogger(FeedParser.class);
     private XmlPullParserFactory mXmlPullParserFactory;
     private OkHttpClient mHttpClient;
     private boolean mDebug;
@@ -39,9 +39,8 @@ public class FeedParser {
 
 
     private FeedParser(Builder builder) {
-        fLogger = Logger.getLogger(FeedParser.class);
-        fLogger.setDebug(builder.debug);
         mDebug = builder.debug;
+        sLogger.setDebug(mDebug);
         mHttpClient = builder.httpClient;
         mTimeout = builder.timeout;
         try {
