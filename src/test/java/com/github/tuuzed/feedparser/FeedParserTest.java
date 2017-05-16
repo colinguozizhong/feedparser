@@ -13,7 +13,6 @@ public class FeedParserTest {
                 .readTimeout(5, TimeUnit.SECONDS)
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .build();
-        ;
         FeedParser feedParser = new FeedParser.Builder()
                 .setDebug(true)
                 .setHttpClient(httpClient)

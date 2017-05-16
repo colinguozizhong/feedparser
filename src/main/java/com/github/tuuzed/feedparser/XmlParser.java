@@ -1,4 +1,3 @@
-package com.github.tuuzed.feedparser;
 /* Copyright 2017 TuuZed
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,8 @@ package com.github.tuuzed.feedparser;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.github.tuuzed.feedparser;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

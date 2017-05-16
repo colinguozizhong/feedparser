@@ -27,7 +27,7 @@ public class CharSetUtils {
             Pattern.CASE_INSENSITIVE);
 
     public static String getCharSet(String src) {
-        if (TextUtils.isEmpty(src)) {
+        if (src == null || src.trim().length() == 0) {
             return null;
         }
         Matcher matcher = sPattern.matcher(src);
