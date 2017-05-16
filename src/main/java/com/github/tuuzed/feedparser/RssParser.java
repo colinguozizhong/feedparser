@@ -14,6 +14,10 @@
  */
 package com.github.tuuzed.feedparser;
 
+import com.github.tuuzed.feedparser.callback.EntryCallback;
+import com.github.tuuzed.feedparser.callback.FeedCallback;
+import com.github.tuuzed.feedparser.callback.ImageCallback;
+import com.github.tuuzed.feedparser.callback.TextInputCallback;
 import com.github.tuuzed.feedparser.internal.AbstractParser;
 import com.github.tuuzed.feedparser.util.DateUtils;
 import org.xmlpull.v1.XmlPullParser;
@@ -31,6 +35,9 @@ class RssParser extends AbstractParser {
     private boolean isBeginItem = false;
     private List<String> tempList = null;
 
+    private static final String DEF_TYPE = "text/plain";
+    private static final String DEF_LANGUAGE = null;
+
     RssParser() {
     }
 
@@ -43,7 +50,9 @@ class RssParser extends AbstractParser {
         } else if ("channel".equals(tagName)) {
             isBeginChannel = true;
         } else if ("image".equals(tagName)) {
-            callback.imageBegin();
+            if (callback.imageCallback != null) {
+                callback.imageCallback.begin();
+            }
             isBeginImage = true;
         } else if ("skipDays".equals(tagName)) {
             isBeginSkipDays = true;
@@ -52,17 +61,21 @@ class RssParser extends AbstractParser {
             isBeginSkipHours = true;
             tempList = new ArrayList<String>();
         } else if ("textInput".equals(tagName)) {
-            callback.textInputBegin();
+            if (callback.textInputCallback != null) {
+                callback.textInputCallback.begin();
+            }
             isBeginTextInput = true;
         } else if ("item".equals(tagName)) {
-            callback.itemBegin();
+            if (callback.entryCallback != null) {
+                callback.entryCallback.begin();
+            }
             isBeginItem = true;
         }
         if (isBeginChannel) {
             if (isBeginItem) {
-                item(tagName, xmlPullParser, callback);
+                item(tagName, xmlPullParser, callback.entryCallback);
             } else if (isBeginImage) {
-                image(tagName, xmlPullParser, callback);
+                image(tagName, xmlPullParser, callback.imageCallback);
             } else if (isBeginSkipDays) {
                 if (tempList != null && "skipDays".equals(tagName)) {
                     tempList.add(nextText(xmlPullParser));
@@ -72,10 +85,40 @@ class RssParser extends AbstractParser {
                     tempList.add(nextText(xmlPullParser));
                 }
             } else if (isBeginTextInput) {
-                textInput(tagName, xmlPullParser, callback);
+                textInput(tagName, xmlPullParser, callback.textInputCallback);
             } else {
                 channel(tagName, xmlPullParser, callback);
             }
+        }
+    }
+
+    @Override
+    public void endTag(String tagName, FeedCallback callback) {
+        if ("rss".equals(tagName)) {
+            callback.end();
+        } else if ("channel".equals(tagName)) {
+            isBeginChannel = false;
+        } else if ("image".equals(tagName)) {
+            if (callback.imageCallback != null) {
+                callback.imageCallback.end();
+            }
+            isBeginImage = false;
+        } else if ("skipDays".equals(tagName)) {
+            isBeginSkipDays = false;
+            callback.skipDays(tempList);
+        } else if ("skipHours".equals(tagName)) {
+            isBeginSkipHours = false;
+            callback.skipHours(tempList);
+        } else if ("textInput".equals(tagName)) {
+            isBeginTextInput = false;
+            if (callback.textInputCallback != null) {
+                callback.textInputCallback.end();
+            }
+        } else if ("item".equals(tagName)) {
+            if (callback.entryCallback != null) {
+                callback.entryCallback.end();
+            }
+            isBeginItem = false;
         }
     }
 
@@ -85,23 +128,23 @@ class RssParser extends AbstractParser {
         if (attrs != null) {
             version = attrs.get("version");
         }
-        callback.rss(version);
+        callback.feed("rss", version);
     }
 
     private void channel(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
         if ("title".equals(tagName)) {
-            callback.title(nextText(xmlPullParser));
+            callback.title(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("link".equals(tagName)) {
             callback.link(nextText(xmlPullParser));
         } else if ("description".equals(tagName)) {
-            callback.description(nextText(xmlPullParser));
+            callback.subtitle(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("category".equals(tagName)) {
             String domain = null;
             Map<String, String> attrs = getAttrs(xmlPullParser);
             if (attrs != null) {
                 domain = attrs.get("domain");
             }
-            callback.category(nextText(xmlPullParser), domain);
+            callback.tags(nextText(xmlPullParser), domain);
         } else if ("cloud".equals(tagName)) {
             Map<String, String> attrs = getAttrs(xmlPullParser);
             String domain = null;
@@ -118,21 +161,21 @@ class RssParser extends AbstractParser {
             }
             callback.cloud(domain, port, path, registerProcedure, protocol);
         } else if ("copyright".equals(tagName)) {
-            callback.copyright(nextText(xmlPullParser));
+            callback.rights(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("docs".equals(tagName)) {
             callback.docs(nextText(xmlPullParser));
         } else if ("generator".equals(tagName)) {
-            callback.generator(nextText(xmlPullParser));
+            callback.generator(null, null, nextText(xmlPullParser));
         } else if ("language".equals(tagName)) {
             callback.language(nextText(xmlPullParser));
         } else if ("lastBuildDate".equals(tagName)) {
             String text = nextText(xmlPullParser);
-            callback.lastBuildDate(DateUtils.parse(text), text);
+            callback.updated(DateUtils.parse(text), text);
         } else if ("managingEditor".equals(tagName)) {
-            callback.managingEditor(nextText(xmlPullParser));
+            callback.authors(nextText(xmlPullParser));
         } else if ("pubDate".equals(tagName)) {
             String text = nextText(xmlPullParser);
-            callback.pubDate(DateUtils.parse(text), text);
+            callback.published(DateUtils.parse(text), text);
         } else if ("rating".equals(tagName)) {
             callback.rating(nextText(xmlPullParser));
         } else if ("ttl".equals(tagName)) {
@@ -142,80 +185,64 @@ class RssParser extends AbstractParser {
         }
     }
 
-    private void image(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void image(String tagName, XmlPullParser xmlPullParser, ImageCallback callback) {
+        if (callback == null) {
+            return;
+        }
         if ("title".equals(tagName)) {
-            callback.imageTitle(nextText(xmlPullParser));
+            callback.title(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("height".equals(tagName)) {
-            callback.imageHeight(nextText(xmlPullParser));
+            callback.height(nextText(xmlPullParser));
         } else if ("width".equals(tagName)) {
-            callback.imageWidth(nextText(xmlPullParser));
+            callback.width(nextText(xmlPullParser));
         } else if ("link".equals(tagName)) {
-            callback.imageLink(nextText(xmlPullParser));
+            callback.links(null, DEF_TYPE, nextText(xmlPullParser));
         } else if ("description".equals(tagName)) {
-            callback.imageDescription(nextText(xmlPullParser));
+            callback.description(nextText(xmlPullParser));
         } else if ("url".equals(tagName)) {
-            callback.imageUrl(nextText(xmlPullParser));
+            callback.link(nextText(xmlPullParser));
         }
     }
 
-    private void textInput(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void textInput(String tagName, XmlPullParser xmlPullParser, TextInputCallback callback) {
+        if (callback == null) {
+            return;
+        }
         if ("title".equals(tagName)) {
-            callback.textInputTitle(nextText(xmlPullParser));
+            callback.title(nextText(xmlPullParser));
         } else if ("link".equals(tagName)) {
-            callback.textInputLink(nextText(xmlPullParser));
+            callback.link(nextText(xmlPullParser));
         } else if ("description".equals(tagName)) {
-            callback.textInputDescription(nextText(xmlPullParser));
+            callback.description(nextText(xmlPullParser));
         } else if ("name".equals(tagName)) {
-            callback.textInputName(nextText(xmlPullParser));
+            callback.name(nextText(xmlPullParser));
         }
     }
 
-
-    @Override
-    public void endTag(String tagName, FeedCallback callback) {
-        if ("rss".equals(tagName)) {
-            callback.end();
-        } else if ("channel".equals(tagName)) {
-            isBeginChannel = false;
-        } else if ("image".equals(tagName)) {
-            callback.imageEnd();
-            isBeginImage = false;
-        } else if ("skipDays".equals(tagName)) {
-            isBeginSkipDays = false;
-            callback.skipDays(tempList);
-        } else if ("skipHours".equals(tagName)) {
-            isBeginSkipHours = false;
-            callback.skipHours(tempList);
-        } else if ("textInput".equals(tagName)) {
-            isBeginTextInput = false;
-            callback.textInputEnd();
-        } else if ("item".equals(tagName)) {
-            isBeginItem = false;
-            callback.itemEnd();
+    private void item(String tagName, XmlPullParser xmlPullParser, EntryCallback callback) {
+        if (callback == null) {
+            return;
         }
-    }
-
-    private void item(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
         if ("title".equals(tagName)) {
-            callback.itemTitle(nextText(xmlPullParser));
+            callback.title(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("link".equals(tagName)) {
-            callback.itemLink(nextText(xmlPullParser));
+            callback.link(nextText(xmlPullParser));
         } else if ("author".equals(tagName)) {
-            callback.itemAuthor(nextText(xmlPullParser));
+            callback.authors(nextText(xmlPullParser));
         } else if ("category".equals(tagName)) {
             String domain = null;
             Map<String, String> attrs = getAttrs(xmlPullParser);
             if (attrs != null) {
                 domain = attrs.get("domain");
             }
-            callback.itemCategory(nextText(xmlPullParser), domain);
+            callback.tags(nextText(xmlPullParser), domain);
         } else if ("pubDate".equals(tagName)) {
             String text = nextText(xmlPullParser);
-            callback.itemPubDate(DateUtils.parse(text), text);
+            callback.published(DateUtils.parse(text), text);
         } else if ("comments".equals(tagName)) {
-            callback.itemComments(nextText(xmlPullParser));
+            callback.comments(nextText(xmlPullParser));
         } else if ("description".equals(tagName)) {
-            callback.itemDescription(nextText(xmlPullParser));
+            callback.summary(DEF_TYPE, DEF_LANGUAGE, nextText(xmlPullParser));
         } else if ("enclosure".equals(tagName)) {
             String length = null;
             String type = null;
@@ -226,21 +253,21 @@ class RssParser extends AbstractParser {
                 type = attrs.get("type");
                 url = attrs.get("url");
             }
-            callback.itemEnclosure(length, type, url);
+            callback.enclosure(length, type, url);
         } else if ("guid".equals(tagName)) {
             boolean isPermaLink = false;
             Map<String, String> attrs = getAttrs(xmlPullParser);
             if (attrs != null) {
                 isPermaLink = Boolean.parseBoolean(attrs.get("isPermaLink"));
             }
-            callback.itemGuid(nextText(xmlPullParser), isPermaLink);
+            callback.id(nextText(xmlPullParser), isPermaLink);
         } else if ("source".equals(tagName)) {
             String url = null;
             Map<String, String> attrs = getAttrs(xmlPullParser);
             if (attrs != null) {
                 url = attrs.get("url");
             }
-            callback.itemSource(nextText(xmlPullParser), url);
+            callback.source(nextText(xmlPullParser), url);
         }
     }
 }

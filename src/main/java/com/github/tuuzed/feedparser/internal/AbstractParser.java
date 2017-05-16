@@ -14,7 +14,7 @@
  */
 package com.github.tuuzed.feedparser.internal;
 
-import com.github.tuuzed.feedparser.FeedCallback;
+import com.github.tuuzed.feedparser.callback.FeedCallback;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

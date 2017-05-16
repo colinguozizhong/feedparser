@@ -14,6 +14,7 @@
  */
 package com.github.tuuzed.feedparser;
 
+import com.github.tuuzed.feedparser.callback.FeedCallback;
 import com.github.tuuzed.feedparser.internal.AbstractParser;
 import com.github.tuuzed.feedparser.internal.IBuilder;
 import com.github.tuuzed.feedparser.internal.Logger;
@@ -112,6 +113,8 @@ public class FeedParser {
                 public void startTag(XmlPullParser xmlPullParser, String tagName) {
                     if (parser == null && "rss".equals(tagName)) {
                         parser = new RssParser();
+                    } else if (parser == null && "feed".equals(tagName)) {
+                        parser = new AtomParser();
                     }
                     if (parser != null) {
                         parser.startTag(tagName, xmlPullParser, callback);
@@ -125,11 +128,11 @@ public class FeedParser {
                 }
 
                 public void error(Throwable throwable) {
-                    callback.error(throwable);
+                    callback.lethalError(throwable);
                 }
             });
         } catch (XmlPullParserException e) {
-            callback.error(e);
+            callback.lethalError(e);
         }
     }
 
