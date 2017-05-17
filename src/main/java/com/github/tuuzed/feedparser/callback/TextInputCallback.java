@@ -14,12 +14,35 @@
  */
 package com.github.tuuzed.feedparser.callback;
 
+/**
+ * /rss/channel/textInput
+ */
 public interface TextInputCallback extends Callback {
+    /**
+     * /rss/channel/textInput/title
+     *
+     * @param value
+     */
     void title(String value);
 
+    /**
+     * /rss/channel/textInput/description
+     *
+     * @param value
+     */
     void description(String value);
 
+    /**
+     * /rss/channel/textInput/name
+     *
+     * @param value
+     */
     void name(String value);
 
+    /**
+     * /rss/channel/textInput/link
+     *
+     * @param value
+     */
     void link(String value);
 }

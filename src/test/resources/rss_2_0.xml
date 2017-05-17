@@ -9,6 +9,7 @@
         <managingEditor>editor@example.org</managingEditor>
         <webMaster>webmaster@example.org</webMaster>
         <pubDate>Sat, 07 Sep 2002 0:00:01 GMT</pubDate>
+        <lastBuildDate>Sat, 07 Sep 2002 0:00:01 GMT</lastBuildDate>
         <category>Examples</category>
         <generator>Sample Toolkit</generator>
         <docs>http://feedvalidator.org/docs/rss2.html</docs>
@@ -31,13 +32,18 @@
             <name>q</name>
             <link>http://example.org/mt/mt-search.cgi</link>
         </textInput>
+        <skipDays>
+            <day>星期六</day>
+            <day>星期天</day>
+        </skipDays>
+        <skipHours>
+            <hour>1</hour>
+            <hour>2</hour>
+        </skipHours>
         <item>
             <title>First item title</title>
             <link>http://example.org/item/1</link>
-            <description>Watch out for
-                &lt;span style="background: url(javascript:window.location=’http://example.org/’)"&gt;
-                nasty tricks&lt;/span&gt;
-            </description>
+            <description>description</description>
             <author>mark@example.org</author>
             <category>Miscellaneous</category>
             <comments>http://example.org/comments/1</comments>

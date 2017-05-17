@@ -14,19 +14,52 @@
  */
 package com.github.tuuzed.feedparser.callback;
 
+/**
+ * /rss/channel/image
+ */
 public interface ImageCallback extends Callback {
 
-    void title(String type, String language, String value);
+    /**
+     * /rss/channel/image/title
+     *
+     * @param value
+     */
+    void title(String value);
 
-    void links(String rel, String type, String href);
-
+    /**
+     * /rss/channel/image/link
+     *
+     * @param value
+     */
     void link(String value);
 
+    /**
+     * /rss/channel/image/url
+     *
+     * @param value
+     */
+    void href(String value);
+
+
+    /**
+     * /rss/channel/image/description
+     *
+     * @param value
+     */
     void description(String value);
 
+    /**
+     * /rss/channel/image/width
+     *
+     * @param value
+     */
     void width(String value);
 
+    /**
+     * /rss/channel/image/height
+     *
+     * @param value
+     */
     void height(String value);
 
-    void href(String value);
 }

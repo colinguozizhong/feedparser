@@ -1,7 +1,7 @@
 package com.github.tuuzed.feedparser;
 
 import com.github.tuuzed.feedparser.callback.TextInputCallback;
-import com.github.tuuzed.feedparser.internal.Logger;
+import com.github.tuuzed.feedparser.util.Logger;
 
 public class TestTextInputCallback implements TextInputCallback {
     private final Logger logger = Logger.getLogger(this.getClass());

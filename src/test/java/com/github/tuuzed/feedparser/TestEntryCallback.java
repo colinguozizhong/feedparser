@@ -1,7 +1,7 @@
 package com.github.tuuzed.feedparser;
 
 import com.github.tuuzed.feedparser.callback.EntryCallback;
-import com.github.tuuzed.feedparser.internal.Logger;
+import com.github.tuuzed.feedparser.util.Logger;
 
 import java.util.Date;
 
@@ -25,20 +25,10 @@ public class TestEntryCallback implements EntryCallback {
 
 
     @Override
-    public void title(String type, String language, String value) {
-        logger.info("title: type: " + type
-                + ",language: " + language
-                + ",value: " + value
-        );
+    public void title(String value) {
+        logger.info("title: " + value);
     }
 
-    @Override
-    public void links(String rel, String type, String href) {
-        logger.info("links: type: " + type
-                + ",rel: " + rel
-                + ",type: " + type
-        );
-    }
 
     @Override
     public void link(String value) {
@@ -77,7 +67,7 @@ public class TestEntryCallback implements EntryCallback {
     }
 
     @Override
-    public void id(String value, boolean isPermaLink) {
+    public void id(String value, Boolean isPermaLink) {
         logger.info("id: value: " + value
                 + ",isPermaLink: " + isPermaLink
         );

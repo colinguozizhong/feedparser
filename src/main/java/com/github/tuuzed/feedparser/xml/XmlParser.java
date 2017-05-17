@@ -12,15 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser;
+package com.github.tuuzed.feedparser.xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-class XmlParser {
-    static void parse(XmlPullParser xmlPullParser, Callback callback) {
+public class XmlParser {
+    private XmlParser() {
+    }
+
+    public static void parse(XmlPullParser xmlPullParser, Callback callback) {
         try {
             int eventType = xmlPullParser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {

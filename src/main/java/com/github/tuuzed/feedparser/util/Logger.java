@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.internal;
+package com.github.tuuzed.feedparser.util;
 
 public final class Logger {
     public static Logger getLogger(Class clazz) {
@@ -33,7 +33,7 @@ public final class Logger {
 
     public void info(String msg) {
         if (debug) {
-            System.out.println(name + "\tINFO:\t" + msg);
+            System.out.println(name + "\tINFO:\t" + msg.trim());
         }
     }
 
@@ -46,7 +46,7 @@ public final class Logger {
 
     public void error(String msg) {
         if (debug)
-            System.out.println(name + "\tERROR:\t" + msg);
+            System.out.println(name + "\tERROR:\t" + msg.trim());
     }
 
     public void error(Throwable throwable) {

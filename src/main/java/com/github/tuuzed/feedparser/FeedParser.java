@@ -14,11 +14,13 @@
  */
 package com.github.tuuzed.feedparser;
 
+import com.github.tuuzed.feedparser.atom.AtomParser;
 import com.github.tuuzed.feedparser.callback.FeedCallback;
-import com.github.tuuzed.feedparser.internal.AbstractParser;
-import com.github.tuuzed.feedparser.internal.IBuilder;
-import com.github.tuuzed.feedparser.internal.Logger;
+import com.github.tuuzed.feedparser.rss.RssParser;
 import com.github.tuuzed.feedparser.util.CharSetUtils;
+import com.github.tuuzed.feedparser.util.Logger;
+import com.github.tuuzed.feedparser.xml.AbstractParser;
+import com.github.tuuzed.feedparser.xml.XmlParser;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,7 +39,6 @@ public class FeedParser {
     private OkHttpClient mHttpClient;
     private boolean mDebug;
     private int mTimeout;
-
 
     private FeedParser(Builder builder) {
         mDebug = builder.debug;
@@ -146,8 +147,7 @@ public class FeedParser {
         }
     }
 
-
-    public static class Builder implements IBuilder<FeedParser> {
+    public static class Builder {
 
         private boolean debug;
         private OkHttpClient httpClient;
@@ -175,6 +175,4 @@ public class FeedParser {
             return new FeedParser(this);
         }
     }
-
-
 }

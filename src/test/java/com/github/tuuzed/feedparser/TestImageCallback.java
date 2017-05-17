@@ -1,7 +1,8 @@
 package com.github.tuuzed.feedparser;
 
 import com.github.tuuzed.feedparser.callback.ImageCallback;
-import com.github.tuuzed.feedparser.internal.Logger;
+import com.github.tuuzed.feedparser.util.Logger;
+
 
 public class TestImageCallback implements ImageCallback {
 
@@ -22,24 +23,18 @@ public class TestImageCallback implements ImageCallback {
     }
 
     @Override
-    public void title(String type, String language, String value) {
-        logger.info("title: type: " + type
-                + ",language: " + language
-                + ",value: " + value
-        );
-    }
-
-    @Override
-    public void links(String rel, String type, String href) {
-        logger.info("links: type: " + type
-                + ",rel: " + rel
-                + ",href: " + href
-        );
+    public void title(String value) {
+        logger.info("value: " + value);
     }
 
     @Override
     public void link(String value) {
         logger.info("link: " + value);
+    }
+
+    @Override
+    public void href(String value) {
+        logger.info("href: " + value);
     }
 
     @Override
@@ -55,11 +50,6 @@ public class TestImageCallback implements ImageCallback {
     @Override
     public void height(String value) {
         logger.info("height: " + value);
-    }
-
-    @Override
-    public void href(String value) {
-        logger.info("href: " + value);
     }
 
 

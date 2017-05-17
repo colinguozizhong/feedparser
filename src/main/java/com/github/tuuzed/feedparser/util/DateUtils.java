@@ -57,9 +57,7 @@ public class DateUtils {
                     CUSTOM_DATE_FORMATS.get(i).setTimeZone(timeZone);
                     return CUSTOM_DATE_FORMATS.get(i).parse(strDate);
                 }
-            } catch (ParseException e) {
-                i++;
-            } catch (NumberFormatException e) {
+            } catch (ParseException | NumberFormatException e) {
                 i++;
             }
         }
@@ -100,7 +98,7 @@ public class DateUtils {
                 /* Common DateFormat */"yyyy-MM-dd",
                 /* Common DateFormat */"MMM dd, yyyy"};
 
-        CUSTOM_DATE_FORMATS = new ArrayList<DateFormat>();
+        CUSTOM_DATE_FORMATS = new ArrayList<>();
         for (String s : possibleDateFormats) {
             CUSTOM_DATE_FORMATS.add(new SimpleDateFormat(s, Locale.ENGLISH));
         }

@@ -1,7 +1,7 @@
 package com.github.tuuzed.feedparser;
 
 import com.github.tuuzed.feedparser.callback.FeedCallback;
-import com.github.tuuzed.feedparser.internal.Logger;
+import com.github.tuuzed.feedparser.util.Logger;
 
 import java.util.Date;
 import java.util.List;
@@ -71,11 +71,8 @@ public class TestFeedCallback extends FeedCallback {
     }
 
     @Override
-    public void generator(String uri, String version, String value) {
-        logger.info("generator: uri: " + uri
-                + ",version: " + version
-                + ",value: " + value
-        );
+    public void generator(String value) {
+        logger.info("generator: " + value);
     }
 
     @Override

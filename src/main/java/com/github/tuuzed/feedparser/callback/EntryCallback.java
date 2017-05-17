@@ -17,31 +17,102 @@ package com.github.tuuzed.feedparser.callback;
 
 import java.util.Date;
 
+/**
+ * /rss/channel/item
+ */
 public interface EntryCallback extends Callback {
 
-    void title(String type, String language, String value);
+    /**
+     * /rss/channel/item/title
+     *
+     * @param value
+     */
+    void title(String value);
 
-    void links(String rel, String type, String href);
-
+    /**
+     * @param value
+     */
     void link(String value);
 
-    void authors(String name);
-
-    void tags(String tag, String domain);
-
-    void published(Date date, String strDate);
-
-    void updated(Date date, String strDate);
-
-    void comments(String value);
-
-    void id(String value, boolean isPermaLink);
-
-    void enclosure(String length, String type, String url);
-
-    void source(String value, String link);
-
+    /**
+     * /rss/channel/item/description
+     *
+     * @param type
+     * @param language
+     * @param value
+     */
     void summary(String type, String language, String value);
 
+    /**
+     * /rss/channel/item/description
+     *
+     * @param type
+     * @param language
+     * @param value
+     */
     void content(String type, String language, String value);
+
+    /**
+     * /rss/channel/item/author
+     *
+     * @param name
+     */
+    void authors(String name);
+
+    /**
+     * /rss/channel/item/category
+     *
+     * @param value
+     * @param domain
+     */
+    void tags(String value, String domain);
+
+    /**
+     * /rss/channel/item/comments
+     *
+     * @param value
+     */
+    void comments(String value);
+
+    /**
+     * /rss/channel/item/enclosure
+     *
+     * @param length
+     * @param type
+     * @param url
+     */
+    void enclosure(String length, String type, String url);
+
+    /**
+     * /rss/channel/item/guid
+     *
+     * @param value
+     * @param isPermaLink
+     */
+    void id(String value, Boolean isPermaLink);
+
+    /**
+     * /rss/channel/item/pubDate
+     *
+     * @param date
+     * @param strDate
+     */
+    void published(Date date, String strDate);
+
+    /**
+     * @param date
+     * @param strDate
+     */
+    void updated(Date date, String strDate);
+
+
+    /**
+     * /rss/channel/item/source
+     *
+     * @param value
+     * @param link
+     */
+    void source(String value, String link);
+
+
 }

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.internal;
+package com.github.tuuzed.feedparser.xml;
 
 import com.github.tuuzed.feedparser.callback.FeedCallback;
 import org.xmlpull.v1.XmlPullParser;
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractParser {
+
     public abstract void startTag(String tagName, XmlPullParser xmlPullParser, FeedCallback callback);
 
     public abstract void endTag(String tagName, FeedCallback callback);
