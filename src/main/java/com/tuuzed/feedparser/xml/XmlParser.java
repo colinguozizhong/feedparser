@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.xml;
+package com.tuuzed.feedparser.xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -20,9 +20,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 public class XmlParser {
-    private XmlParser() {
-    }
-
     public static void parse(XmlPullParser xmlPullParser, Callback callback) {
         try {
             int eventType = xmlPullParser.getEventType();
@@ -37,9 +34,7 @@ public class XmlParser {
                 }
                 eventType = xmlPullParser.next();
             }
-        } catch (XmlPullParserException e) {
-            callback.error(e);
-        } catch (IOException e) {
+        } catch (XmlPullParserException | IOException e) {
             callback.error(e);
         }
     }

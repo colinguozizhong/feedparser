@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.util;
+package com.tuuzed.feedparser.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CharSetUtils {
+public class CharSetUtil {
     private final static Pattern sPattern = Pattern.compile(
             "(encoding|charset)=.*(GB2312|UTF-8|GBK).*",
             Pattern.CASE_INSENSITIVE);

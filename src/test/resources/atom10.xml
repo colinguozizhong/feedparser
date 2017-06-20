@@ -61,7 +61,11 @@
         <content type="xhtml"
                  xml:base="http://example.org/entry/3"
                  xml:lang="en-US">
-            &lt;h1>Watch out for nasty tricks&lt;/h1>
+            <div xmlns="http://www.w3.org/1999/xhtml">Watch out for
+                <span style="background-image: url(javascript:window.location=’http://example.org/’)">
+                    nasty tricks
+                </span>
+            </div>
         </content>
     </entry>
 </feed>

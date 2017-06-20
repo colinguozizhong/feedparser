@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.xml;
+package com.tuuzed.feedparser;
 
-import com.github.tuuzed.feedparser.callback.FeedCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -22,7 +23,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractParser {
+abstract class GenericParser {
+    private static final Logger logger = LoggerFactory.getLogger(GenericParser.class);
 
     public abstract void startTag(String tagName, XmlPullParser xmlPullParser, FeedCallback callback);
 
@@ -32,7 +34,7 @@ public abstract class AbstractParser {
         Map<String, String> attrs = null;
         int count = xmlPullParser.getAttributeCount();
         if (count > 0) {
-            attrs = new HashMap<String, String>();
+            attrs = new HashMap<>();
             for (int i = 0; i < count; i++) {
                 attrs.put(xmlPullParser.getAttributeName(i), xmlPullParser.getAttributeValue(i).trim());
             }
@@ -43,11 +45,9 @@ public abstract class AbstractParser {
     protected String nextText(XmlPullParser xmlPullParser) {
         try {
             return xmlPullParser.nextText();
-        } catch (XmlPullParserException e) {
-            // pass
-        } catch (IOException e) {
-            // pass
+        } catch (XmlPullParserException | IOException e) {
+            logger.error(e.getMessage(), e);
+            return null;
         }
-        return null;
     }
 }

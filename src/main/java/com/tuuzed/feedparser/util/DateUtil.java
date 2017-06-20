@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.util;
+package com.tuuzed.feedparser.util;
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,7 +23,7 @@ import java.util.*;
 /**
  * 日期解析工具
  */
-public class DateUtils {
+public class DateUtil {
     // 自定义日期格式
     private static final List<DateFormat> CUSTOM_DATE_FORMATS;
 
