@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.tuuzed.feedparser.util;
+package com.tuuzed.feedparser.util;
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,7 +23,7 @@ import java.util.*;
 /**
  * 日期解析工具
  */
-public class DateUtils {
+public class DateUtil {
     // 自定义日期格式
     private static final List<DateFormat> CUSTOM_DATE_FORMATS;
 
@@ -57,9 +58,7 @@ public class DateUtils {
                     CUSTOM_DATE_FORMATS.get(i).setTimeZone(timeZone);
                     return CUSTOM_DATE_FORMATS.get(i).parse(strDate);
                 }
-            } catch (ParseException e) {
-                i++;
-            } catch (NumberFormatException e) {
+            } catch (ParseException | NumberFormatException e) {
                 i++;
             }
         }
@@ -100,7 +99,7 @@ public class DateUtils {
                 /* Common DateFormat */"yyyy-MM-dd",
                 /* Common DateFormat */"MMM dd, yyyy"};
 
-        CUSTOM_DATE_FORMATS = new ArrayList<DateFormat>();
+        CUSTOM_DATE_FORMATS = new ArrayList<>();
         for (String s : possibleDateFormats) {
             CUSTOM_DATE_FORMATS.add(new SimpleDateFormat(s, Locale.ENGLISH));
         }

@@ -3,17 +3,17 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
 }
-
-dependencies {
-    compile 'kxml2:kxml2:2.3.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    testCompile 'junit:junit:4.12'
-}
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile 'kxml2:kxml2:2.3.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'org.slf4j:slf4j-log4j12:1.7.25'
 }
