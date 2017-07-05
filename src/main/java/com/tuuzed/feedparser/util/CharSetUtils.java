@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CharSetUtil {
+public class CharSetUtils {
     private final static Pattern sPattern = Pattern.compile(
             "(encoding|charset)=.*(GB2312|UTF-8|GBK).*",
             Pattern.CASE_INSENSITIVE);
@@ -41,17 +41,17 @@ public class CharSetUtil {
     /**
      * 获取输入流可能的编码
      *
-     * @param is
+     * @param inputStream
      * @param charSet
      * @return
      * @throws IOException
      */
-    public static InputStream getCharSet(InputStream is, String[] charSet) throws IOException {
+    public static InputStream getCharSet(InputStream inputStream, String[] charSet) throws IOException {
         StringBuilder sb = new StringBuilder();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] bytes = new byte[1024];
         int len;
-        while ((len = is.read(bytes)) != -1) {
+        while ((len = inputStream.read(bytes)) != -1) {
             sb.append(new String(bytes, 0, len));
             outputStream.write(bytes, 0, len);
             outputStream.flush();

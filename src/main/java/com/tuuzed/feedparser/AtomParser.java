@@ -15,7 +15,7 @@
 package com.tuuzed.feedparser;
 
 
-import com.tuuzed.feedparser.util.DateUtil;
+import com.tuuzed.feedparser.util.DateUtils;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.Map;
@@ -121,7 +121,7 @@ class AtomParser extends GenericParser {
             }
             case "published": {
                 String text = nextText(xmlPullParser);
-                callback.entryPublished(DateUtil.parse(text), text);
+                callback.entryPublished(DateUtils.parse(text), text);
                 break;
             }
             case "summary": {
@@ -151,7 +151,7 @@ class AtomParser extends GenericParser {
             }
             case "updated": {
                 String text = nextText(xmlPullParser);
-                callback.entryUpdated(DateUtil.parse(text), text);
+                callback.entryUpdated(DateUtils.parse(text), text);
                 break;
             }
         }

@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * 日期解析工具
  */
-public class DateUtil {
+public class DateUtils {
     // 自定义日期格式
     private static final List<DateFormat> CUSTOM_DATE_FORMATS;
 

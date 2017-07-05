@@ -1,7 +1,7 @@
 package com.tuuzed.feedparser;
 
-import com.tuuzed.feedparser.util.CharSetUtil;
-import com.tuuzed.feedparser.util.CloseableUtil;
+import com.tuuzed.feedparser.util.CharSetUtils;
+import com.tuuzed.feedparser.util.CloseableUtils;
 import com.tuuzed.feedparser.xml.XmlParser;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class FeedParser {
             callback.fatalError(e);
             logger.error(e.getMessage(), e);
         } finally {
-            CloseableUtil.safeClose(inputStream);
+            CloseableUtils.safeClose(inputStream);
             if (connection != null) {
                 connection.disconnect();
             }
@@ -65,13 +65,13 @@ public class FeedParser {
     public static void parse(InputStream is, String charSet, FeedCallback callback) {
         String[] charset = new String[]{charSet};
         try {
-            is = CharSetUtil.getCharSet(is, charset);
+            is = CharSetUtils.getCharSet(is, charset);
             parse(new InputStreamReader(is, charset[0]), callback);
         } catch (IOException e) {
             callback.fatalError(e);
             logger.error(e.getMessage(), e);
         } finally {
-            CloseableUtil.safeClose(is);
+            CloseableUtils.safeClose(is);
         }
     }
 
