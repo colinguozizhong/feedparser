@@ -26,9 +26,9 @@ import java.util.Map;
 abstract class GenericParser {
     private static final Logger logger = LoggerFactory.getLogger(GenericParser.class);
 
-    public abstract void startTag(String tagName, XmlPullParser xmlPullParser, FeedCallback callback);
+    public abstract void startTag(String tagName, XmlPullParser xmlPullParser, FeedHandler callback);
 
-    public abstract void endTag(String tagName, FeedCallback callback);
+    public abstract void endTag(String tagName, FeedHandler handler);
 
     protected Map<String, String> getAttrs(XmlPullParser xmlPullParser) {
         Map<String, String> attrs = null;
@@ -46,7 +46,7 @@ abstract class GenericParser {
         try {
             return xmlPullParser.nextText();
         } catch (XmlPullParserException | IOException e) {
-            logger.error(e.getMessage(), e);
+            logger.debug("nextText: {}", e.getMessage());
             return null;
         }
     }

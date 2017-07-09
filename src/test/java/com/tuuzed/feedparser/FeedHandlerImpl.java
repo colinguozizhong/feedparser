@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class FeedCallbackImpl implements FeedCallback {
+public class FeedHandlerImpl implements FeedHandler {
     public final Logger logger = LoggerFactory.getLogger(FeedParserTest.class);
 
 

@@ -3,7 +3,7 @@ package com.tuuzed.feedparser;
 import java.util.Date;
 import java.util.List;
 
-public interface FeedCallback {
+public interface FeedHandler {
     /**
      * 开始解析
      */

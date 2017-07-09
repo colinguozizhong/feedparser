@@ -27,47 +27,47 @@ class AtomParser extends GenericParser {
     private String[] tempStrArr = new String[3];
 
     @Override
-    public void startTag(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    public void startTag(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "feed":
-                callback.begin();
+                handler.begin();
                 break;
             case "entry":
                 isBeginEntry = true;
-                callback.entryBegin();
+                handler.entryBegin();
                 break;
         }
         if (isBeginEntry) {
-            entry(tagName, xmlPullParser, callback);
+            entry(tagName, xmlPullParser, handler);
         } else {
-            feed(tagName, xmlPullParser, callback);
+            feed(tagName, xmlPullParser, handler);
         }
     }
 
-    private void feed(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void feed(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "title": {
                 String text = nextText(xmlPullParser);
-                callback.title(text);
+                handler.title(text);
                 break;
             }
             case "subtitle": {
                 String text = nextText(xmlPullParser);
-                callback.subtitle(text);
+                handler.subtitle(text);
                 break;
             }
             case "link":
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 if (attrs != null) {
-                    callback.link(attrs.get("type"), attrs.get("href"), attrs.get("title"));
+                    handler.link(attrs.get("type"), attrs.get("href"), attrs.get("title"));
                 } else {
-                    callback.link(null, null, null);
+                    handler.link(null, null, null);
                 }
                 break;
         }
     }
 
-    private void entry(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void entry(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "author": {
                 isBeginEntryAuthor = true;
@@ -95,9 +95,9 @@ class AtomParser extends GenericParser {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 String text = nextText(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryContent(attrs.get("type"), attrs.get("language"), text);
+                    handler.entryContent(attrs.get("type"), attrs.get("language"), text);
                 } else {
-                    callback.entryContent(null, null, text);
+                    handler.entryContent(null, null, text);
                 }
                 break;
             }
@@ -107,30 +107,30 @@ class AtomParser extends GenericParser {
             }
             case "id": {
                 String text = nextText(xmlPullParser);
-                callback.entryId(text);
+                handler.entryId(text);
                 break;
             }
             case "link": {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryLink(attrs.get("type"), attrs.get("href"), attrs.get("title"));
+                    handler.entryLink(attrs.get("type"), attrs.get("href"), attrs.get("title"));
                 } else {
-                    callback.entryLink(null, null, null);
+                    handler.entryLink(null, null, null);
                 }
                 break;
             }
             case "published": {
                 String text = nextText(xmlPullParser);
-                callback.entryPublished(DateUtils.parse(text), text);
+                handler.entryPublished(DateUtils.parse(text), text);
                 break;
             }
             case "summary": {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 String text = nextText(xmlPullParser);
                 if (attrs != null) {
-                    callback.entrySummary(attrs.get("type"), attrs.get("language"), text);
+                    handler.entrySummary(attrs.get("type"), attrs.get("language"), text);
                 } else {
-                    callback.entrySummary(null, null, text);
+                    handler.entrySummary(null, null, text);
                 }
                 break;
             }
@@ -138,42 +138,42 @@ class AtomParser extends GenericParser {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 String text = nextText(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryTags(attrs.get("term"), attrs.get("scheme"), text);
+                    handler.entryTags(attrs.get("term"), attrs.get("scheme"), text);
                 } else {
-                    callback.entryTags(null, null, text);
+                    handler.entryTags(null, null, text);
                 }
                 break;
             }
             case "title": {
                 String text = nextText(xmlPullParser);
-                callback.entryTitle(text);
+                handler.entryTitle(text);
                 break;
             }
             case "updated": {
                 String text = nextText(xmlPullParser);
-                callback.entryUpdated(DateUtils.parse(text), text);
+                handler.entryUpdated(DateUtils.parse(text), text);
                 break;
             }
         }
     }
 
     @Override
-    public void endTag(String tagName, FeedCallback callback) {
+    public void endTag(String tagName, FeedHandler handler) {
         switch (tagName) {
             case "feed":
-                callback.end();
+                handler.end();
                 break;
             case "entry":
                 isBeginEntry = false;
-                callback.entryEnd();
+                handler.entryEnd();
                 break;
             case "author":
-                callback.entryAuthor(tempStrArr[0], tempStrArr[1], tempStrArr[2]);
+                handler.entryAuthor(tempStrArr[0], tempStrArr[1], tempStrArr[2]);
                 emptyTempStrArr();
                 isBeginEntryAuthor = false;
                 break;
             case "contributor":
-                callback.entryContributor(tempStrArr[0], tempStrArr[1], tempStrArr[2]);
+                handler.entryContributor(tempStrArr[0], tempStrArr[1], tempStrArr[2]);
                 emptyTempStrArr();
                 isBeginEntryContributor = false;
                 break;

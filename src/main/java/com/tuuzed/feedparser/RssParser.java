@@ -32,10 +32,10 @@ class RssParser extends GenericParser {
     private List<String> tempList = null;
 
     @Override
-    public void startTag(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    public void startTag(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "rss":
-                callback.begin();
+                handler.begin();
                 break;
             case "channel":
                 isBeginChannel = true;
@@ -56,13 +56,13 @@ class RssParser extends GenericParser {
                 break;
             case "item":
                 isBeginItem = true;
-                callback.entryBegin();
+                handler.entryBegin();
                 break;
         }
         if (isBeginChannel) {
             if (isBeginItem) {
                 // item
-                item(tagName, xmlPullParser, callback);
+                item(tagName, xmlPullParser, handler);
             } else if (isBeginImage) {
                 // image
             } else if (isBeginSkipDays && tempList != null && "day".equals(tagName)) {
@@ -75,118 +75,118 @@ class RssParser extends GenericParser {
                 // textInput
             } else {
                 // channel
-                channel(tagName, xmlPullParser, callback);
+                channel(tagName, xmlPullParser, handler);
             }
         }
     }
 
-    private void channel(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void channel(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "title": {
                 String text = nextText(xmlPullParser);
-                callback.title(text);
+                handler.title(text);
                 break;
             }
             case "description": {
                 String text = nextText(xmlPullParser);
-                callback.subtitle(text);
+                handler.subtitle(text);
                 break;
             }
             case "link": {
                 String text = nextText(xmlPullParser);
-                callback.link(null, text, null);
+                handler.link(null, text, null);
                 break;
             }
         }
     }
 
-    private void item(String tagName, XmlPullParser xmlPullParser, FeedCallback callback) {
+    private void item(String tagName, XmlPullParser xmlPullParser, FeedHandler handler) {
         switch (tagName) {
             case "author": {
                 String text = nextText(xmlPullParser);
-                callback.entryAuthor(text, null, null);
+                handler.entryAuthor(text, null, null);
                 break;
             }
             case "comments": {
                 String text = nextText(xmlPullParser);
-                callback.entryComments(text);
+                handler.entryComments(text);
                 break;
             }
             case "body": {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryContent(attrs.get("type"), attrs.get("language"), attrs.get("content"));
+                    handler.entryContent(attrs.get("type"), attrs.get("language"), attrs.get("content"));
                 } else {
-                    callback.entryContent(null, null, null);
+                    handler.entryContent(null, null, null);
                 }
                 break;
             }
             case "contributor": {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryContributor(attrs.get("name"), attrs.get("href"), attrs.get("email"));
+                    handler.entryContributor(attrs.get("name"), attrs.get("href"), attrs.get("email"));
                 } else {
-                    callback.entryContributor(null, null, null);
+                    handler.entryContributor(null, null, null);
                 }
                 break;
             }
             case "enclosure": {
                 Map<String, String> attrs = getAttrs(xmlPullParser);
                 if (attrs != null) {
-                    callback.entryEnclosure(attrs.get("length"), attrs.get("type"), attrs.get("url"));
+                    handler.entryEnclosure(attrs.get("length"), attrs.get("type"), attrs.get("url"));
                 } else {
-                    callback.entryEnclosure(null, null, null);
+                    handler.entryEnclosure(null, null, null);
                 }
                 break;
             }
             case "expirationDate": {
                 String text = nextText(xmlPullParser);
-                callback.entryPublished(DateUtils.parse(text), text);
+                handler.entryPublished(DateUtils.parse(text), text);
                 break;
             }
             case "guid": {
                 String text = nextText(xmlPullParser);
-                callback.entryId(text);
+                handler.entryId(text);
                 break;
             }
             case "link": {
                 String text = nextText(xmlPullParser);
-                callback.entryLink(null, text, null);
+                handler.entryLink(null, text, null);
                 break;
             }
             case "pubDate": {
                 String text = nextText(xmlPullParser);
-                callback.entryPublished(DateUtils.parse(text), text);
+                handler.entryPublished(DateUtils.parse(text), text);
                 break;
             }
             case "source": {
                 String text = nextText(xmlPullParser);
-                callback.entrySource(text);
+                handler.entrySource(text);
                 break;
             }
             case "description": {
                 String text = nextText(xmlPullParser);
-                callback.entrySummary(null, null, text);
+                handler.entrySummary(null, null, text);
                 break;
             }
             case "category": {
                 String text = nextText(xmlPullParser);
-                callback.entryTags(null, null, text);
+                handler.entryTags(null, null, text);
                 break;
             }
             case "title": {
                 String text = nextText(xmlPullParser);
-                callback.entryTitle(text);
+                handler.entryTitle(text);
                 break;
             }
         }
     }
 
     @Override
-    public void endTag(String tagName, FeedCallback callback) {
+    public void endTag(String tagName, FeedHandler handler) {
         switch (tagName) {
             case "rss":
-                callback.end();
+                handler.end();
                 break;
             case "channel":
                 isBeginChannel = false;
@@ -196,17 +196,17 @@ class RssParser extends GenericParser {
                 break;
             case "skipDays":
                 isBeginSkipDays = false;
-                callback.skipDays(tempList);
+                handler.skipDays(tempList);
                 break;
             case "skipHours":
                 isBeginSkipHours = false;
-                callback.skipHours(tempList);
+                handler.skipHours(tempList);
                 break;
             case "textInput":
                 isBeginTextInput = false;
                 break;
             case "item":
-                callback.entryEnd();
+                handler.entryEnd();
                 isBeginItem = false;
                 break;
         }
