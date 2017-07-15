@@ -6,7 +6,7 @@
 
     <groupId>com.tuuzed</groupId>
     <artifactId>feedparser</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,18 +25,14 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.8.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
+            <version>3.8.1</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

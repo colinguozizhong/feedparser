@@ -2,10 +2,10 @@ package com.tuuzed.feedparser;
 
 import com.tuuzed.feedparser.util.CharSetUtils;
 import com.tuuzed.feedparser.util.CloseableUtils;
+import com.tuuzed.feedparser.util.Logger;
+import com.tuuzed.feedparser.util.LoggerFactory;
 import com.tuuzed.feedparser.xml.XmlParser;
 import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

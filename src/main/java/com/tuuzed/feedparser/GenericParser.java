@@ -14,8 +14,8 @@
  */
 package com.tuuzed.feedparser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.tuuzed.feedparser.util.Logger;
+import com.tuuzed.feedparser.util.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -46,7 +46,7 @@ abstract class GenericParser {
         try {
             return xmlPullParser.nextText();
         } catch (XmlPullParserException | IOException e) {
-            logger.debug("nextText: {}", e.getMessage());
+            logger.info("nextText: " + e.getMessage(), e);
             return null;
         }
     }

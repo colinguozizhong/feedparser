@@ -1,7 +1,8 @@
 package com.tuuzed.feedparser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.tuuzed.feedparser.util.Logger;
+import com.tuuzed.feedparser.util.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -148,6 +149,13 @@ public class FeedHandlerImpl implements FeedHandler {
                 objects[i] = delWrap((String) objects[i]);
             }
         }
-        logger.info(format, objects);
+        for (Object object : objects) {
+            if (object == null) {
+                format = format.replace("{}", "null");
+            } else {
+                format = format.replace("{}", object.toString());
+            }
+        }
+        logger.info(format);
     }
 }

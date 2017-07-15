@@ -23,7 +23,8 @@ public class FeedParserTest {
 
     @Test
     public void localRss() throws Exception {
-        URL url = FeedParserTest.class.getResource("/rss20.xml");
+        URL url = FeedParserTest.class.getClassLoader().getResource("rss20.xml");
+        System.out.print(url);
         FeedParser.parse(new FileReader(url.getFile()), new FeedHandlerImpl());
     }
 
@@ -35,7 +36,7 @@ public class FeedParserTest {
 
     @Test
     public void localAtom() throws Exception {
-        URL url = FeedParserTest.class.getResource("/atom10.xml");
+        URL url = FeedParserTest.class.getClassLoader().getResource("atom10.xml");
         FeedParser.parse(new FileReader(url.getFile()), new FeedHandlerImpl());
     }
 

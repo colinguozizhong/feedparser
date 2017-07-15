@@ -1,7 +1,5 @@
 package com.tuuzed.feedparser.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CloseableUtils {
     // 日志
