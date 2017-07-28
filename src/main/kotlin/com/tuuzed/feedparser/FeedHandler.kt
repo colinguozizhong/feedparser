@@ -1,134 +1,133 @@
-package com.tuuzed.feedparser;
+package com.tuuzed.feedparser
 
-import java.util.Date;
-import java.util.List;
+import java.util.Date
 
-public interface FeedHandler {
+interface FeedHandler {
     /**
      * 开始解析
      */
-    void begin();
+    fun begin()
 
     /**
      * /rss/channel/title
      * /atom10:feed/atom10:title
      */
-    void title(String title);
+    fun title(title: String?)
 
     /**
      * /atom10:feed/atom10:subtitle
      * /rss/channel/description
      */
-    void subtitle(String subtitle);
+    fun subtitle(subtitle: String?)
 
     /**
      * /atom10:feed/atom10:link
      * /rss/channel/link
      */
-    void link(String type, String href, String title);
+    fun link(type: String?, href: String?, title: String?)
 
     /**
      * 解析结束
      */
-    void end();
+    fun end()
 
     /**
      * 错误
      */
-    void error(Throwable throwable);
+    fun error(throwable: Throwable?)
 
     /**
      * 致命的错误
      */
-    void fatalError(Throwable throwable);
+    fun fatalError(throwable: Throwable?)
 
     // skipDays
-    void skipDays(List<String> skipDays);
+    fun skipDays(skipDays: List<String>)
 
     // skipHours
-    void skipHours(List<String> skipHours);
+    fun skipHours(skipHours: List<String>)
 
 
-    void entryBegin();
+    fun entryBegin()
 
     /**
      * /atom10:feed/atom10:entry/atom10:author
      * /rss/channel/item/author
      */
-    void entryAuthor(String name, String uri, String email);
+    fun entryAuthor(name: String?, uri: String?, email: String?)
 
     /**
      * /rss/channel/item/comments
      */
-    void entryComments(String comments);
+    fun entryComments(comments: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:content
      * /rss/channel/item/body
      */
-    void entryContent(String type, String language, String content);
+    fun entryContent(type: String?, language: String?, content: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:contributor
      * /rss/channel/item/contributor
      */
-    void entryContributor(String name, String href, String email);
+    fun entryContributor(name: String?, href: String?, email: String?)
 
     /**
      * /rss/channel/item/enclosure
      */
-    void entryEnclosure(String length, String type, String url);
+    fun entryEnclosure(length: String?, type: String?, url: String?)
 
     /**
      * /rss/channel/item/expirationDate
      */
-    void entryExpired(Date expired, String strExpired);
+    fun entryExpired(expired: Date?, strExpired: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:id
      * /rss/channel/item/guid
      */
-    void entryId(String id);
+    fun entryId(id: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:link@href
      * /rss/channel/item/link
      */
-    void entryLink(String type, String href, String title);
+    fun entryLink(type: String?, href: String?, title: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:published
      * /rss/channel/item/pubDate
      */
-    void entryPublished(Date published, String strPublished);
+    fun entryPublished(published: Date?, strPublished: String?)
 
     /**
      * /rss/channel/item/source
      */
-    void entrySource(String source);
+    fun entrySource(source: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:summary
      * /rss/channel/item/description
      */
-    void entrySummary(String type, String language, String summary);
+    fun entrySummary(type: String?, language: String?, summary: String?)
 
     /**
      * /atom10:feed/atom10:entry/category
      * /rss/channel/item/category
      */
-    void entryTags(String term, String scheme, String tag);
+    fun entryTags(term: String?, scheme: String?, tag: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:title
      * /rss/channel/item/title
      */
-    void entryTitle(String title);
+    fun entryTitle(title: String?)
 
     /**
      * /atom10:feed/atom10:entry/atom10:updated
      */
-    void entryUpdated(Date updated, String strUpdated);
+    fun entryUpdated(updated: Date?, strUpdated: String?)
 
-    void entryEnd();
+    fun entryEnd()
 }
