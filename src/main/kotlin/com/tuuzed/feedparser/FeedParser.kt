@@ -76,9 +76,9 @@ object FeedParser {
         }
     }
 
-    fun parse(inputStream: InputStream, handler: FeedHandler, charSet: String = "utf-8") {
+    fun parse(inputStream: InputStream, handler: FeedHandler, defCharSet: String = "utf-8") {
         var input = inputStream
-        val charset = arrayOf(charSet)
+        val charset = arrayOf(defCharSet)
         try {
             input = input.getPossibleEncoding(charset)
             parse(InputStreamReader(inputStream, charset[0]), handler)
