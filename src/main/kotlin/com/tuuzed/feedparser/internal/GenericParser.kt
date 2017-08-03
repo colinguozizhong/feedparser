@@ -12,24 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.util
+package com.tuuzed.feedparser.internal
 
-class Logger(clazz: Class<*>) {
-    private val name: String = clazz.name
+import com.tuuzed.feedparser.FeedHandler
+import org.xmlpull.v1.XmlPullParser
 
-    fun info(message: String?, throwable: Throwable? = null) {
-        System.out.printf("%s INFO: %s%n", name, message)
-        throwable?.printStackTrace()
-    }
+internal abstract class GenericParser {
 
-    fun error(message: String?, throwable: Throwable? = null) {
-        System.out.printf("%s ERROR: %s%n", name, message)
-        throwable?.printStackTrace()
-    }
+    /**
+     * 开始解析标签
+     */
+    abstract fun startTag(tagName: String, pullParser: XmlPullParser, handler: FeedHandler)
+
+    /**
+     * 结束解析标签
+     */
+    abstract fun endTag(tagName: String, handler: FeedHandler)
 }
 
-object LoggerFactory {
-    fun getLogger(clazz: Class<*>): Logger {
-        return Logger(clazz)
-    }
-}

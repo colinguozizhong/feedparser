@@ -1,11 +1,10 @@
 package com.tuuzed.feedparser
 
-import com.tuuzed.feedparser.util.LoggerFactory
 import java.util.*
 
 
 class FeedHandlerImpl : FeedHandler {
-    val logger = LoggerFactory.getLogger(javaClass)
+    val logger = Logger.getLogger(javaClass)
     override fun begin() {
         println("begin")
     }

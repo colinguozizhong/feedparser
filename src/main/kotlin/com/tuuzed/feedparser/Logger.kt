@@ -12,6 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.ext
+package com.tuuzed.feedparser
 
-fun <T> Array<T?>.clear() = this.indices.forEach({ this[it] = null })
+open class Logger(clazz: Class<*>) {
+    private val name: String = clazz.name
+
+    fun info(message: String?, throwable: Throwable? = null) {
+        System.out.printf("%s INFO: %s%n", name, message)
+        throwable?.printStackTrace()
+    }
+
+    fun error(message: String?, throwable: Throwable? = null) {
+        System.out.printf("%s ERROR: %s%n", name, message)
+        throwable?.printStackTrace()
+    }
+
+    companion object {
+        fun getLogger(clazz: Class<*>): Logger {
+            return Logger(clazz)
+        }
+    }
+}

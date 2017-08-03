@@ -1,9 +1,26 @@
+/* Copyright 2017 TuuZed
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.tuuzed.feedparser
 
 import com.tuuzed.feedparser.ext.getPossibleEncoding
-import com.tuuzed.feedparser.util.CloseableUtils
-import com.tuuzed.feedparser.util.LoggerFactory
-import com.tuuzed.feedparser.xml.XmlParser
+import com.tuuzed.feedparser.internal.AtomParser
+import com.tuuzed.feedparser.internal.GenericParser
+import com.tuuzed.feedparser.internal.RssParser
+import com.tuuzed.feedparser.internal.XmlParser
+import com.tuuzed.feedparser.internal.util.CloseableUtils
+import com.tuuzed.feedparser.internal.util.DateUtils
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.xmlpull.v1.XmlPullParser
@@ -15,22 +32,23 @@ import java.io.InputStreamReader
 import java.io.Reader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.DateFormat
 
 object FeedParser {
     // 日志
-    private val logger = LoggerFactory.getLogger(javaClass)
-
+    private val logger = Logger.getLogger(javaClass)
     private var httpClient: OkHttpClient? = null
+
 
     fun setHttpClient(httpClient: OkHttpClient) {
         FeedParser.httpClient = httpClient
     }
 
-    fun parse(url: String, callback: FeedHandler) {
-        parse(url, "utf-8", callback)
+    fun appendDateFormat(format: DateFormat) {
+        DateUtils.addDateFormat(format)
     }
 
-    fun parse(url: String, defCharSet: String, handler: FeedHandler) {
+    fun parse(url: String, handler: FeedHandler, defCharSet: String = "utf-8") {
         var connection: HttpURLConnection? = null
         var inputStream: InputStream? = null
         try {
@@ -45,7 +63,7 @@ object FeedParser {
             } else {
                 connection = URL(url).openConnection() as HttpURLConnection
                 inputStream = connection.inputStream
-                parse(inputStream, defCharSet, handler)
+                parse(inputStream, handler, defCharSet)
             }
         } catch (e: IOException) {
             handler.fatalError(e)
@@ -58,7 +76,7 @@ object FeedParser {
         }
     }
 
-    fun parse(inputStream: InputStream, charSet: String, handler: FeedHandler) {
+    fun parse(inputStream: InputStream, handler: FeedHandler, charSet: String = "utf-8") {
         var input = inputStream
         val charset = arrayOf(charSet)
         try {
@@ -87,15 +105,11 @@ object FeedParser {
                     } else if (parser == null && "feed" == tagName) {
                         parser = AtomParser()
                     }
-                    if (parser != null) {
-                        parser!!.startTag(tagName, pullParser, handler)
-                    }
+                    parser?.startTag(tagName, pullParser, handler)
                 }
 
                 override fun endTag(tagName: String) {
-                    if (parser != null) {
-                        parser!!.endTag(tagName, handler)
-                    }
+                    parser?.endTag(tagName, handler)
                 }
 
                 override fun error(throwable: Throwable) {
@@ -107,5 +121,4 @@ object FeedParser {
         }
 
     }
-
 }

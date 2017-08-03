@@ -12,6 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.ext
+package com.tuuzed.feedparser.internal.util
 
-fun <T> Array<T?>.clear() = this.indices.forEach({ this[it] = null })
+
+internal object CloseableUtils {
+    fun safeClose(closeable: AutoCloseable?) {
+        if (closeable != null) {
+            try {
+                closeable.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+}
