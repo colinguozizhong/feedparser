@@ -22,7 +22,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile 'net.sf.kxml:kxml2:2.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
-    testompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 compileKotlin {
