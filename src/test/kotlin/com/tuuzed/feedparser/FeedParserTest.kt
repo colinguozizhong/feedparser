@@ -10,7 +10,7 @@ class FeedParserTest {
 
     @Before
     fun setup() {
-        FeedParser.setHttpClient(OkHttpClient())
+        // FeedParser.setHttpClient(OkHttpClient())
     }
 
     @Test

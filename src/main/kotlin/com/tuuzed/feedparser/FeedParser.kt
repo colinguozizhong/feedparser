@@ -14,7 +14,7 @@
  */
 package com.tuuzed.feedparser
 
-import com.tuuzed.feedparser.ext.getPossibleEncoding
+import com.tuuzed.feedparser.ext.getReader
 import com.tuuzed.feedparser.internal.AtomParser
 import com.tuuzed.feedparser.internal.GenericParser
 import com.tuuzed.feedparser.internal.RssParser
@@ -28,7 +28,6 @@ import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.Reader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -77,16 +76,13 @@ object FeedParser {
     }
 
     fun parse(inputStream: InputStream, handler: FeedHandler, defCharSet: String = "utf-8") {
-        var input = inputStream
-        val charset = arrayOf(defCharSet)
         try {
-            input = input.getPossibleEncoding(charset)
-            parse(InputStreamReader(inputStream, charset[0]), handler)
+            parse(inputStream.getReader(defCharSet), handler)
         } catch (e: IOException) {
             handler.fatalError(e)
             logger.error(e.message, e)
         } finally {
-            CloseableUtils.safeClose(input)
+            CloseableUtils.safeClose(inputStream)
         }
     }
 
@@ -97,7 +93,7 @@ object FeedParser {
             val xmlPullParser = xmlPullParserFactory.newPullParser()
             xmlPullParser.setInput(reader)
             XmlParser.parse(xmlPullParser, object : XmlParser.Callback {
-                internal var parser: GenericParser? = null
+                var parser: GenericParser? = null
 
                 override fun startTag(pullParser: XmlPullParser, tagName: String) {
                     if (parser == null && "rss" == tagName) {
