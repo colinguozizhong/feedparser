@@ -14,17 +14,16 @@
  */
 package com.tuuzed.feedparser.internal.util
 
-import java.text.DateFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * 日期解析工具
  */
 internal object DateUtils {
     // 自定义日期格式
-    private val CUSTOM_DATE_FORMATS: MutableList<DateFormat>
+    private val dateFormats: ArrayList<SimpleDateFormat>
 
     init {
         val possibleDateFormats = arrayOf(
@@ -51,46 +50,26 @@ internal object DateUtils {
                 /* Common DateFormat */"yyyy-MM-dd HH:mm:ss",
                 /* Common DateFormat */"yyyy-MM-dd",
                 /* Common DateFormat */"MMM dd, yyyy")
-
-        CUSTOM_DATE_FORMATS = possibleDateFormats.mapTo(ArrayList<DateFormat>()) { SimpleDateFormat(it, Locale.ENGLISH) }
+        dateFormats = possibleDateFormats.mapTo(ArrayList<SimpleDateFormat>(possibleDateFormats.size),
+                { SimpleDateFormat(it.replace(":", ""), Locale.ENGLISH) })
     }
 
     fun parse(strDate: String?, timeZone: TimeZone = TimeZone.getTimeZone("Asia/Shanghai")): Date? {
-        var varStrDate = strDate
-        if (varStrDate == null || varStrDate.isEmpty()) return null
-        varStrDate = varStrDate.trim { it <= ' ' }
-        if (varStrDate.length > 10) {
-            if ((varStrDate.substring(varStrDate.length - 5).indexOf("+") == 0 || varStrDate.substring(varStrDate.length - 5).indexOf("-") == 0) && varStrDate.substring(varStrDate.length - 5).indexOf(":") == 2) {
-                val sign = varStrDate.substring(varStrDate.length - 5, varStrDate.length - 4)
-                varStrDate = varStrDate.substring(0, varStrDate.length - 5) + sign + "0" + varStrDate.substring(varStrDate.length - 4)
-            }
-            val dateEnd = varStrDate.substring(varStrDate.length - 6)
-            if ((dateEnd.indexOf("-") == 0 || dateEnd.indexOf("+") == 0) && dateEnd.indexOf(":") == 3) {
-                if ("GMT" != varStrDate.substring(varStrDate.length - 9, varStrDate.length - 6)) {
-                    val oldDate = varStrDate
-                    val newEnd = dateEnd.substring(0, 3) + dateEnd.substring(4)
-                    varStrDate = oldDate.substring(0, oldDate.length - 6) + newEnd
-                }
-            }
-        }
-        var i = 0
-        while (i < CUSTOM_DATE_FORMATS.size) {
+        if (strDate == null) return null
+        val _strDate = strDate.trim().replace(":", "")
+        var date: Date? = null
+        dateFormats.forEach {
             try {
-                synchronized(CUSTOM_DATE_FORMATS[i]) {
-                    CUSTOM_DATE_FORMATS[i].timeZone = timeZone
-                    return CUSTOM_DATE_FORMATS[i].parse(varStrDate)
-                }
-            } catch (e: ParseException) {
-                i++
-            } catch (e: NumberFormatException) {
-                i++
+                it.timeZone = timeZone
+                date = it.parse(_strDate)
+                return date
+            } catch (e: Exception) {
             }
-
         }
-        return null
+        return date
     }
 
-    fun addDateFormat(format: DateFormat) {
-        CUSTOM_DATE_FORMATS.add(format)
+    fun addDateFormat(format: SimpleDateFormat) {
+        dateFormats.add(format)
     }
 }

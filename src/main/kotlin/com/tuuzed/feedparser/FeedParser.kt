@@ -31,7 +31,8 @@ import java.io.InputStream
 import java.io.Reader
 import java.net.HttpURLConnection
 import java.net.URL
-import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 object FeedParser {
     // 日志
@@ -43,8 +44,8 @@ object FeedParser {
         FeedParser.httpClient = httpClient
     }
 
-    fun appendDateFormat(format: DateFormat) {
-        DateUtils.addDateFormat(format)
+    fun appendDateFormat(format: String, locale: Locale = Locale.CHINA) {
+        DateUtils.addDateFormat(SimpleDateFormat(format.replace(":", ""), locale))
     }
 
     fun parse(url: String, handler: FeedHandler, defCharSet: String = "utf-8") {

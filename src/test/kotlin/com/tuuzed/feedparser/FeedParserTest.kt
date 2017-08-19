@@ -31,7 +31,7 @@ class FeedParserTest {
     @Test
     @Throws(Exception::class)
     fun atom() {
-        val atom = "https://www.v2ex.com/feed/tab/tech.xml"
+        val atom = "http://droidyue.com/atom.xml"
         FeedParser.parse(atom, FeedHandlerImpl())
     }
 
