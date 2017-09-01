@@ -14,25 +14,25 @@
  */
 package com.tuuzed.feedparser
 
-import java.util.Date
+import java.util.*
 
 interface FeedCallback {
     /**
      * 开始解析
      */
-    fun begin()
+    fun start()
 
     /**
      * /rss/channel/title
      * /atom10:feed/atom10:title
      */
-    fun title(title: String?)
+    fun title(title: String)
 
     /**
      * /atom10:feed/atom10:subtitle
      * /rss/channel/description
      */
-    fun subtitle(subtitle: String?)
+    fun subtitle(subtitle: String)
 
     /**
      * /atom10:feed/atom10:link
@@ -55,14 +55,18 @@ interface FeedCallback {
      */
     fun fatalError(throwable: Throwable? = null)
 
-    // skipDays
-    fun skipDays(skipDays: List<String> = emptyList())
+    /**
+     * skipDays
+     */
+    fun skipDays(skipDays: List<String>)
 
-    // skipHours
-    fun skipHours(skipHours: List<String> = emptyList())
+    /**
+     * skipHours
+     */
+    fun skipHours(skipHours: List<String>)
 
 
-    fun entryBegin()
+    fun entryStart()
 
     /**
      * /atom10:feed/atom10:entry/atom10:author
@@ -73,7 +77,7 @@ interface FeedCallback {
     /**
      * /rss/channel/item/comments
      */
-    fun entryComments(comments: String? = null)
+    fun entryComments(comments: String)
 
     /**
      * /atom10:feed/atom10:entry/atom10:content
@@ -95,13 +99,13 @@ interface FeedCallback {
     /**
      * /rss/channel/item/expirationDate
      */
-    fun entryExpired(expired: Date? = null, strExpired: String? = null)
+    fun entryExpired(expired: Date?, rawExpired: String)
 
     /**
      * /atom10:feed/atom10:entry/atom10:id
      * /rss/channel/item/guid
      */
-    fun entryId(id: String? = null)
+    fun entryId(id: String)
 
     /**
      * /atom10:feed/atom10:entry/atom10:link@href
@@ -113,12 +117,12 @@ interface FeedCallback {
      * /atom10:feed/atom10:entry/atom10:published
      * /rss/channel/item/pubDate
      */
-    fun entryPublished(published: Date? = null, strPublished: String? = null)
+    fun entryPublished(published: Date?, rawPublished: String)
 
     /**
      * /rss/channel/item/source
      */
-    fun entrySource(source: String? = null)
+    fun entrySource(source: String)
 
     /**
      * /atom10:feed/atom10:entry/atom10:summary
@@ -136,12 +140,12 @@ interface FeedCallback {
      * /atom10:feed/atom10:entry/atom10:title
      * /rss/channel/item/title
      */
-    fun entryTitle(title: String? = null)
+    fun entryTitle(title: String)
 
     /**
      * /atom10:feed/atom10:entry/atom10:updated
      */
-    fun entryUpdated(updated: Date? = null, strUpdated: String? = null)
+    fun entryUpdated(updated: Date?, rawUpdated: String)
 
     fun entryEnd()
 }

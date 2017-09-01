@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.internal.util
+package com.tuuzed.feedparser.util
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -54,7 +54,7 @@ internal object DateParser {
         DATE_FORMATS = DATE_PATTERNS.mapTo(ArrayList()) { SimpleDateFormat(it, Locale.ENGLISH) }
     }
 
-    fun parse(source: String?, timeZone: TimeZone = TimeZone.getTimeZone("Asia/Shanghai")): Date? {
+    fun parse(source: String, timeZone: TimeZone = TimeZone.getDefault()): Date? {
         var date: Date? = null
         for (dateFormat in DATE_FORMATS) {
             try {
@@ -68,7 +68,7 @@ internal object DateParser {
         return date
     }
 
-    fun addDateFormat(format: DateFormat) {
+    fun appendDateFormat(format: DateFormat) {
         DATE_FORMATS.add(format)
     }
 }

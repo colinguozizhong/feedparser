@@ -16,7 +16,7 @@ package com.tuuzed.feedparser.ext
 
 import org.xmlpull.v1.XmlPullParser
 
-fun XmlPullParser.attrs(): Map<String, String> {
+fun XmlPullParser.getAttrs(): Map<String, String> {
     val attrs = mutableMapOf<String, String>()
     val count = this.attributeCount
     if (count > 0) {

@@ -5,16 +5,16 @@ import java.util.*
 
 
 class FeedHandlerImpl : FeedCallback {
-    val logger = LoggerFactory.getLogger(javaClass)
-    override fun begin() {
+    private val logger = LoggerFactory.getLogger(javaClass)!!
+    override fun start() {
         logger.info("")
     }
 
-    override fun title(title: String?) {
+    override fun title(title: String) {
         logger.info("title: $title")
     }
 
-    override fun subtitle(subtitle: String?) {
+    override fun subtitle(subtitle: String) {
         logger.info("subtitle: $subtitle")
     }
 
@@ -42,7 +42,7 @@ class FeedHandlerImpl : FeedCallback {
         logger.info("skipHours: $skipHours")
     }
 
-    override fun entryBegin() {
+    override fun entryStart() {
         logger.info("")
     }
 
@@ -50,11 +50,11 @@ class FeedHandlerImpl : FeedCallback {
         logger.info("name: $name, uri: $uri, email: $email")
     }
 
-    override fun entryTitle(title: String?) {
+    override fun entryTitle(title: String) {
         logger.info("title: $title")
     }
 
-    override fun entryId(id: String?) {
+    override fun entryId(id: String) {
         logger.info("id: $id")
     }
 
@@ -62,19 +62,19 @@ class FeedHandlerImpl : FeedCallback {
         logger.info("type: $type, href: $href, title: $title")
     }
 
-    override fun entryPublished(published: Date?, strPublished: String?) {
-        logger.info("published: $published , strPublished: $strPublished")
+    override fun entryPublished(published: Date?, rawPublished: String) {
+        logger.info("published: $published , rawPublished: $rawPublished")
     }
 
-    override fun entrySource(source: String?) {
+    override fun entrySource(source: String) {
         logger.info("source: $source")
     }
 
-    override fun entryUpdated(updated: Date?, strUpdated: String?) {
-        logger.info("updated: $updated, strUpdated: $strUpdated")
+    override fun entryUpdated(updated: Date?, rawUpdated: String) {
+        logger.info("updated: $updated, rawUpdated: $rawUpdated")
     }
 
-    override fun entryComments(comments: String?) {
+    override fun entryComments(comments: String) {
         logger.info("comments: $comments")
     }
 
@@ -98,8 +98,8 @@ class FeedHandlerImpl : FeedCallback {
         logger.info("length: {$length, type: $length, url: $url")
     }
 
-    override fun entryExpired(expired: Date?, strExpired: String?) {
-        logger.info("expired: $expired, strExpired: $strExpired")
+    override fun entryExpired(expired: Date?, rawExpired: String) {
+        logger.info("expired: $expired, rawExpired: $rawExpired")
     }
 
     override fun entryEnd() {

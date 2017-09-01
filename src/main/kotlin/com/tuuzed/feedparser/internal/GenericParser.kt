@@ -14,9 +14,10 @@
  */
 package com.tuuzed.feedparser.internal
 
+import com.tuuzed.feedparser.FeedCallback
 import org.xmlpull.v1.XmlPullParser
 
-internal abstract class GenericParser {
+internal abstract class GenericParser(internal val callback: FeedCallback) {
 
     /**
      * 开始解析标签

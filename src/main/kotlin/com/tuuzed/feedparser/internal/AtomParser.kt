@@ -15,13 +15,13 @@
 package com.tuuzed.feedparser.internal
 
 import com.tuuzed.feedparser.FeedCallback
-import com.tuuzed.feedparser.ext.attrs
+import com.tuuzed.feedparser.ext.getAttrs
 import com.tuuzed.feedparser.ext.clear
 import com.tuuzed.feedparser.ext.getNextText
-import com.tuuzed.feedparser.internal.util.DateParser
+import com.tuuzed.feedparser.util.DateParser
 import org.xmlpull.v1.XmlPullParser
 
-internal class AtomParser(private val callback: FeedCallback) : GenericParser() {
+internal class AtomParser(callback: FeedCallback) : GenericParser(callback) {
     private var isBeginEntry = false
     private var isBeginEntryAuthor = false
     private var isBeginEntryContributor = false
@@ -29,11 +29,11 @@ internal class AtomParser(private val callback: FeedCallback) : GenericParser() 
     override fun startTag(tag: String, xmlPullParser: XmlPullParser) {
         when (tag) {
             "feed" -> {
-                callback.begin()
+                callback.start()
             }
             "entry" -> {
                 isBeginEntry = true
-                callback.entryBegin()
+                callback.entryStart()
             }
         }
         if (isBeginEntry) entry(tag, xmlPullParser)
@@ -43,13 +43,19 @@ internal class AtomParser(private val callback: FeedCallback) : GenericParser() 
     private fun feed(tagName: String, xmlPullParser: XmlPullParser) {
         when (tagName) {
             "title" -> {
-                callback.title(xmlPullParser.getNextText())
+                val title = xmlPullParser.getNextText()
+                if (title != null) {
+                    callback.title(title)
+                }
             }
             "subtitle" -> {
-                callback.subtitle(xmlPullParser.getNextText())
+                val subtitle = xmlPullParser.getNextText()
+                if (subtitle != null) {
+                    callback.subtitle(subtitle)
+                }
             }
             "link" -> {
-                val attrs = xmlPullParser.attrs()
+                val attrs = xmlPullParser.getAttrs()
                 callback.link(attrs["type"], attrs["href"], attrs["title"])
             }
         }
@@ -70,37 +76,47 @@ internal class AtomParser(private val callback: FeedCallback) : GenericParser() 
                 if (isBeginEntryAuthor || isBeginEntryContributor) tmpStrArr[2] = xmlPullParser.getNextText()
             }
             "content" -> {
-                val attrs = xmlPullParser.attrs()
+                val attrs = xmlPullParser.getAttrs()
                 callback.entryContent(attrs["type"], attrs["language"], xmlPullParser.getNextText())
             }
             "contributor" -> {
                 isBeginEntryContributor = true
             }
             "id" -> {
-                callback.entryId(xmlPullParser.getNextText())
+                val id = xmlPullParser.getNextText()
+                if (id != null) {
+                    callback.entryId(id)
+                }
             }
             "link" -> {
-                val attrs = xmlPullParser.attrs()
+                val attrs = xmlPullParser.getAttrs()
                 callback.entryLink(attrs["type"], attrs["href"], attrs["title"])
             }
             "published" -> {
-                val text = xmlPullParser.getNextText()
-                callback.entryPublished(DateParser.parse(text), text)
+                val published = xmlPullParser.getNextText()
+                if (published != null) {
+                    callback.entryPublished(DateParser.parse(published), published)
+                }
             }
             "summary" -> {
-                val attrs = xmlPullParser.attrs()
+                val attrs = xmlPullParser.getAttrs()
                 callback.entrySummary(attrs["type"], attrs["language"], xmlPullParser.getNextText())
             }
             "category" -> {
-                val attrs = xmlPullParser.attrs()
+                val attrs = xmlPullParser.getAttrs()
                 callback.entryTags(attrs["term"], attrs["scheme"], xmlPullParser.getNextText())
             }
             "title" -> {
-                callback.entryTitle(xmlPullParser.getNextText())
+                val title = xmlPullParser.getNextText()
+                if (title != null) {
+                    callback.entryTitle(title)
+                }
             }
             "updated" -> {
-                val text = xmlPullParser.getNextText()
-                callback.entryUpdated(DateParser.parse(text), text)
+                val updated = xmlPullParser.getNextText()
+                if (updated != null) {
+                    callback.entryUpdated(DateParser.parse(updated), updated)
+                }
             }
         }
     }

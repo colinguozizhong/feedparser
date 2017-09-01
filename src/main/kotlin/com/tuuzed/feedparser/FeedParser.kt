@@ -17,18 +17,19 @@ package com.tuuzed.feedparser
 import com.tuuzed.feedparser.internal.AtomParser
 import com.tuuzed.feedparser.internal.GenericParser
 import com.tuuzed.feedparser.internal.RssParser
-import com.tuuzed.feedparser.internal.util.DateParser
-import com.tuuzed.feedparser.internal.util.FastXmlPullParser
+import com.tuuzed.feedparser.util.DateParser
+import com.tuuzed.feedparser.util.FastXmlPullParser
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import java.io.IOException
 import java.io.Reader
 import java.text.DateFormat
 
 object FeedParser {
 
     fun appendDateFormat(format: DateFormat) {
-        DateParser.addDateFormat(format)
+        DateParser.appendDateFormat(format)
     }
 
     fun parse(input: Reader, callback: FeedCallback) {
@@ -61,7 +62,12 @@ object FeedParser {
             })
         } catch (e: XmlPullParserException) {
             callback.fatalError(e)
+        } finally {
+            try {
+                input.close()
+            } catch (e: IOException) {
+                // pass
+            }
         }
-
     }
 }
