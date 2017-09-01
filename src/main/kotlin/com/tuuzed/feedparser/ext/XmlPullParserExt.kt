@@ -15,27 +15,22 @@
 package com.tuuzed.feedparser.ext
 
 import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserException
-import java.io.IOException
 
-fun XmlPullParser.getAttrs(): Map<String, String> {
+fun XmlPullParser.attrs(): Map<String, String> {
     val attrs = mutableMapOf<String, String>()
     val count = this.attributeCount
     if (count > 0) {
-        for (i in 0..count - 1) {
-            attrs.put(this.getAttributeName(i), this.getAttributeValue(i).trim { it <= ' ' })
+        for (index in 0 until count) {
+            attrs.put(this.getAttributeName(index).trim(), this.getAttributeValue(index).trim())
         }
     }
     return attrs
 }
 
 fun XmlPullParser.getNextText(): String? {
-    try {
-        return this.nextText()
-    } catch (e: XmlPullParserException) {
-        e.printStackTrace()
-    } catch (e: IOException) {
-        e.printStackTrace()
+    return try {
+        this.nextText().trim()
+    } catch (e: Exception) {
+        null
     }
-    return null
 }

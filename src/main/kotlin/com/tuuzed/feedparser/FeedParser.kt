@@ -14,110 +14,53 @@
  */
 package com.tuuzed.feedparser
 
-import com.tuuzed.feedparser.ext.getPossibleEncoding
 import com.tuuzed.feedparser.internal.AtomParser
 import com.tuuzed.feedparser.internal.GenericParser
 import com.tuuzed.feedparser.internal.RssParser
-import com.tuuzed.feedparser.internal.XmlParser
-import com.tuuzed.feedparser.internal.util.CloseableUtils
-import com.tuuzed.feedparser.internal.util.DateUtils
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.tuuzed.feedparser.internal.util.DateParser
+import com.tuuzed.feedparser.internal.util.FastXmlPullParser
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.Reader
-import java.net.HttpURLConnection
-import java.net.URL
 import java.text.DateFormat
 
 object FeedParser {
-    // 日志
-    private val logger = Logger.getLogger(javaClass)
-    private var httpClient: OkHttpClient? = null
-
-
-    fun setHttpClient(httpClient: OkHttpClient) {
-        FeedParser.httpClient = httpClient
-    }
 
     fun appendDateFormat(format: DateFormat) {
-        DateUtils.addDateFormat(format)
+        DateParser.addDateFormat(format)
     }
 
-    fun parse(url: String, handler: FeedHandler, defCharSet: String = "utf-8") {
-        var connection: HttpURLConnection? = null
-        var inputStream: InputStream? = null
-        try {
-            if (httpClient != null) {
-                // 使用okHttp请求
-                val request = Request.Builder().url(url).get().build()
-                val call = httpClient!!.newCall(request)
-                val response = call.execute()
-                val body = response.body() ?: throw IOException("连接失败")
-                val reader = body.charStream()
-                parse(reader, handler)
-            } else {
-                connection = URL(url).openConnection() as HttpURLConnection
-                inputStream = connection.inputStream
-                parse(inputStream, handler, defCharSet)
-            }
-        } catch (e: IOException) {
-            handler.fatalError(e)
-            logger.error(e.message, e)
-        } finally {
-            CloseableUtils.safeClose(inputStream)
-            if (connection != null) {
-                connection.disconnect()
-            }
-        }
-    }
-
-    fun parse(inputStream: InputStream, handler: FeedHandler, defCharSet: String = "utf-8") {
-        var input = inputStream
-        val charset = arrayOf(defCharSet)
-        try {
-            input = input.getPossibleEncoding(charset)
-            parse(InputStreamReader(inputStream, charset[0]), handler)
-        } catch (e: IOException) {
-            handler.fatalError(e)
-            logger.error(e.message, e)
-        } finally {
-            CloseableUtils.safeClose(input)
-        }
-    }
-
-    fun parse(reader: Reader, handler: FeedHandler) {
+    fun parse(input: Reader, callback: FeedCallback) {
         val xmlPullParserFactory: XmlPullParserFactory
         try {
             xmlPullParserFactory = XmlPullParserFactory.newInstance()
             val xmlPullParser = xmlPullParserFactory.newPullParser()
-            xmlPullParser.setInput(reader)
-            XmlParser.parse(xmlPullParser, object : XmlParser.Callback {
-                internal var parser: GenericParser? = null
+            xmlPullParser.setInput(input)
+            FastXmlPullParser.parse(xmlPullParser, object : FastXmlPullParser.Callback {
+                var parser: GenericParser? = null
 
-                override fun startTag(pullParser: XmlPullParser, tagName: String) {
-                    if (parser == null && "rss" == tagName) {
-                        parser = RssParser()
-                    } else if (parser == null && "feed" == tagName) {
-                        parser = AtomParser()
+                override fun startTag(xmlPullParser: XmlPullParser, tag: String) {
+                    if (parser == null) {
+                        if ("rss" == tag) {
+                            parser = RssParser(callback)
+                        } else if ("feed" == tag) {
+                            parser = AtomParser(callback)
+                        }
                     }
-                    parser?.startTag(tagName, pullParser, handler)
+                    parser?.startTag(tag, xmlPullParser)
                 }
 
-                override fun endTag(tagName: String) {
-                    parser?.endTag(tagName, handler)
+                override fun endTag(tag: String) {
+                    parser?.endTag(tag)
                 }
 
                 override fun error(throwable: Throwable) {
-                    handler.error(throwable)
+                    callback.error(throwable)
                 }
             })
         } catch (e: XmlPullParserException) {
-            handler.fatalError(e)
+            callback.fatalError(e)
         }
 
     }

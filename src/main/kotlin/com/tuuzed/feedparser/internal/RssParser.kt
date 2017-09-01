@@ -14,13 +14,12 @@
  */
 package com.tuuzed.feedparser.internal
 
-import com.tuuzed.feedparser.FeedHandler
-import com.tuuzed.feedparser.ext.getAttrs
-import com.tuuzed.feedparser.ext.getNextText
-import com.tuuzed.feedparser.internal.util.DateUtils
+import com.tuuzed.feedparser.FeedCallback
+import com.tuuzed.feedparser.ext.attrs
+import com.tuuzed.feedparser.internal.util.DateParser
 import org.xmlpull.v1.XmlPullParser
 
-internal class RssParser : GenericParser() {
+internal class RssParser(private val callback: FeedCallback) : GenericParser() {
     private var isBeginChannel = false
     private var isBeginImage = false
     private var isBeginTextInput = false
@@ -29,10 +28,10 @@ internal class RssParser : GenericParser() {
     private var isBeginItem = false
     private var tmpList = mutableListOf<String>()
 
-    override fun startTag(tagName: String, pullParser: XmlPullParser, handler: FeedHandler) {
-        when (tagName) {
+    override fun startTag(tag: String, xmlPullParser: XmlPullParser) {
+        when (tag) {
             "rss" -> {
-                handler.begin()
+                callback.begin()
             }
             "channel" -> {
                 isBeginChannel = true
@@ -53,34 +52,34 @@ internal class RssParser : GenericParser() {
             }
             "item" -> {
                 isBeginItem = true
-                handler.entryBegin()
+                callback.entryBegin()
             }
         }
         if (isBeginChannel) {
             if (isBeginItem) {
                 // item
-                item(tagName, pullParser, handler)
+                item(tag, xmlPullParser)
             } else if (isBeginImage) {
                 // image
-            } else if (isBeginSkipDays && "day" == tagName) {
+            } else if (isBeginSkipDays && "day" == tag) {
                 // skipDays
-                tmpList.add(pullParser.getNextText()!!)
-            } else if (isBeginSkipHours && "hour" == tagName) {
+                tmpList.add(xmlPullParser.nextText()!!)
+            } else if (isBeginSkipHours && "hour" == tag) {
                 // skipHours
-                tmpList.add(pullParser.getNextText()!!)
+                tmpList.add(xmlPullParser.nextText()!!)
             } else if (isBeginTextInput) {
                 // textInput
             } else {
                 // channel
-                channel(tagName, pullParser, handler)
+                channel(tag, xmlPullParser)
             }
         }
     }
 
-    override fun endTag(tagName: String, handler: FeedHandler) {
-        when (tagName) {
+    override fun endTag(tag: String) {
+        when (tag) {
             "rss" -> {
-                handler.end()
+                callback.end()
             }
             "channel" -> {
                 isBeginChannel = false
@@ -90,81 +89,81 @@ internal class RssParser : GenericParser() {
             }
             "skipDays" -> {
                 isBeginSkipDays = false
-                handler.skipDays(tmpList)
+                callback.skipDays(tmpList)
             }
             "skipHours" -> {
                 isBeginSkipHours = false
-                handler.skipHours(tmpList)
+                callback.skipHours(tmpList)
             }
             "textInput" -> {
                 isBeginTextInput = false
             }
             "item" -> {
-                handler.entryEnd()
+                callback.entryEnd()
                 isBeginItem = false
             }
         }
     }
 
-    private fun channel(tagName: String, xmlPullParser: XmlPullParser, handler: FeedHandler) {
-        when (tagName) {
+    private fun channel(tag: String, xmlPullParser: XmlPullParser) {
+        when (tag) {
             "title" -> {
-                handler.title(xmlPullParser.getNextText())
+                callback.title(xmlPullParser.nextText())
             }
             "description" -> {
-                handler.subtitle(xmlPullParser.getNextText())
+                callback.subtitle(xmlPullParser.nextText())
             }
             "link" -> {
-                handler.link(href = xmlPullParser.getNextText())
+                callback.link(href = xmlPullParser.nextText())
             }
         }
     }
 
-    private fun item(tagName: String, xmlPullParser: XmlPullParser, handler: FeedHandler) {
-        when (tagName) {
+    private fun item(tag: String, xmlPullParser: XmlPullParser) {
+        when (tag) {
             "author" -> {
-                handler.entryAuthor(name = xmlPullParser.getNextText())
+                callback.entryAuthor(name = xmlPullParser.nextText())
             }
             "comments" -> {
-                handler.entryComments(xmlPullParser.getNextText())
+                callback.entryComments(xmlPullParser.nextText())
             }
             "body" -> {
-                val attrs = xmlPullParser.getAttrs()
-                handler.entryContent(attrs["type"], attrs["language"], attrs["content"])
+                val attrs = xmlPullParser.attrs()
+                callback.entryContent(attrs["type"], attrs["language"], attrs["content"])
             }
             "contributor" -> {
-                val attrs = xmlPullParser.getAttrs()
-                handler.entryContributor(attrs["name"], attrs["href"], attrs["email"])
+                val attrs = xmlPullParser.attrs()
+                callback.entryContributor(attrs["name"], attrs["href"], attrs["email"])
             }
             "enclosure" -> {
-                val attrs = xmlPullParser.getAttrs()
-                handler.entryEnclosure(attrs["length"], attrs["type"], attrs["url"])
+                val attrs = xmlPullParser.attrs()
+                callback.entryEnclosure(attrs["length"], attrs["type"], attrs["url"])
             }
             "expirationDate" -> {
-                val text = xmlPullParser.getNextText()
-                handler.entryPublished(DateUtils.parse(text), text)
+                val text = xmlPullParser.nextText()
+                callback.entryPublished(DateParser.parse(text), text)
             }
             "guid" -> {
-                handler.entryId(xmlPullParser.getNextText())
+                callback.entryId(xmlPullParser.nextText())
             }
             "link" -> {
-                handler.entryLink(href = xmlPullParser.getNextText())
+                callback.entryLink(href = xmlPullParser.nextText())
             }
             "pubDate" -> {
-                val text = xmlPullParser.getNextText()
-                handler.entryPublished(DateUtils.parse(text), text)
+                val text = xmlPullParser.nextText()
+                callback.entryPublished(DateParser.parse(text), text)
             }
             "source" -> {
-                handler.entrySource(xmlPullParser.getNextText())
+                callback.entrySource(xmlPullParser.nextText())
             }
             "description" -> {
-                handler.entrySummary(summary = xmlPullParser.getNextText())
+                callback.entrySummary(summary = xmlPullParser.nextText())
             }
             "category" -> {
-                handler.entryTags(tag = xmlPullParser.getNextText())
+                callback.entryTags(tag = xmlPullParser.nextText())
             }
             "title" -> {
-                handler.entryTitle(xmlPullParser.getNextText())
+                callback.entryTitle(xmlPullParser.nextText())
             }
         }
     }

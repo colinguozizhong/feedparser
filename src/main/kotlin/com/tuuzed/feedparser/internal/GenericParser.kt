@@ -14,7 +14,6 @@
  */
 package com.tuuzed.feedparser.internal
 
-import com.tuuzed.feedparser.FeedHandler
 import org.xmlpull.v1.XmlPullParser
 
 internal abstract class GenericParser {
@@ -22,11 +21,11 @@ internal abstract class GenericParser {
     /**
      * 开始解析标签
      */
-    abstract fun startTag(tagName: String, pullParser: XmlPullParser, handler: FeedHandler)
+    abstract fun startTag(tag: String, xmlPullParser: XmlPullParser)
 
     /**
      * 结束解析标签
      */
-    abstract fun endTag(tagName: String, handler: FeedHandler)
+    abstract fun endTag(tag: String)
 }
 

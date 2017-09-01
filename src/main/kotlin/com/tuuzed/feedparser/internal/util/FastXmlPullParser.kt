@@ -12,34 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.internal
+package com.tuuzed.feedparser.internal.util
 
 import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserException
-import java.io.IOException
 
-internal object XmlParser {
-    fun parse(pullParser: XmlPullParser, callback: Callback) {
+internal object FastXmlPullParser {
+    fun parse(xmlPullParser: XmlPullParser, callback: Callback) {
         try {
-            var eventType = pullParser.eventType
+            var eventType = xmlPullParser.eventType
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 when (eventType) {
-                    XmlPullParser.START_TAG -> callback.startTag(pullParser, pullParser.name)
-                    XmlPullParser.END_TAG -> callback.endTag(pullParser.name)
+                    XmlPullParser.START_TAG -> callback.startTag(xmlPullParser, xmlPullParser.name)
+                    XmlPullParser.END_TAG -> callback.endTag(xmlPullParser.name)
                 }
-                eventType = pullParser.next()
+                eventType = xmlPullParser.next()
             }
-        } catch (e: XmlPullParserException) {
-            callback.error(e)
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             callback.error(e)
         }
     }
 
     interface Callback {
-        fun startTag(pullParser: XmlPullParser, tagName: String)
+        fun startTag(xmlPullParser: XmlPullParser, tag: String)
 
-        fun endTag(tagName: String)
+        fun endTag(tag: String)
 
         fun error(throwable: Throwable)
     }

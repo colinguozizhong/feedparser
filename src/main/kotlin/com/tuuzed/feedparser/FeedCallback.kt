@@ -16,7 +16,7 @@ package com.tuuzed.feedparser
 
 import java.util.Date
 
-interface FeedHandler {
+interface FeedCallback {
     /**
      * 开始解析
      */
@@ -26,7 +26,7 @@ interface FeedHandler {
      * /rss/channel/title
      * /atom10:feed/atom10:title
      */
-    fun title(title: String? = null)
+    fun title(title: String?)
 
     /**
      * /atom10:feed/atom10:subtitle
