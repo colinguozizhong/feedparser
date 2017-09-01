@@ -32,7 +32,7 @@ class FeedParserTest {
         val rss = "http://news.qq.com/newsgn/rss_newsgn.xml"
         val responseBody = getResponseBody(rss)
         if (responseBody != null) {
-            FeedParser.parse(responseBody.charStream(), FeedHandlerImpl())
+            FeedParser.parse(responseBody.charStream(), FeedCallbackImpl())
         }
     }
 
@@ -40,7 +40,7 @@ class FeedParserTest {
     @Throws(Exception::class)
     fun localRss() {
         val url = FeedParserTest::class.java.classLoader.getResource("rss20.xml")
-        FeedParser.parse(FileReader(url!!.file), FeedHandlerImpl())
+        FeedParser.parse(FileReader(url!!.file), FeedCallbackImpl())
     }
 
     @Test
@@ -49,7 +49,7 @@ class FeedParserTest {
         val atom = "https://www.v2ex.com/feed/tab/tech.xml"
         val responseBody = getResponseBody(atom)
         if (responseBody != null) {
-            FeedParser.parse(responseBody.charStream(), FeedHandlerImpl())
+            FeedParser.parse(responseBody.charStream(), FeedCallbackImpl())
         }
     }
 
@@ -57,7 +57,7 @@ class FeedParserTest {
     @Throws(Exception::class)
     fun localAtom() {
         val url = FeedParserTest::class.java.classLoader.getResource("atom10.xml")
-        FeedParser.parse(FileReader(url!!.file), FeedHandlerImpl())
+        FeedParser.parse(FileReader(url!!.file), FeedCallbackImpl())
     }
 
 }

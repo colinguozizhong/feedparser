@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 
-class FeedHandlerImpl : FeedCallback {
+class FeedCallbackImpl : FeedCallback {
     private val logger = LoggerFactory.getLogger(javaClass)!!
     override fun start() {
         logger.info("")
