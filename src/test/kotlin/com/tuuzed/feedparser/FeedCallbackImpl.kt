@@ -103,7 +103,7 @@ class FeedCallbackImpl : FeedCallback {
     }
 
     override fun itemEnclosure(length: String?, type: String?, url: String?) {
-        logger.info("length: {$length, type: $length, url: $url")
+        logger.info("length: $length, type: $length, url: $url")
     }
 
     override fun itemExpired(expired: Date?, rawExpired: String) {

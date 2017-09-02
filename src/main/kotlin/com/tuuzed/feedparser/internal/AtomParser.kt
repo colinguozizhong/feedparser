@@ -39,8 +39,8 @@ internal class AtomParser(callback: FeedCallback) : GenericParser(callback) {
         else feed(tag, xmlPullParser)
     }
 
-    private fun feed(tagName: String, xmlPullParser: XmlPullParser) {
-        when (tagName) {
+    private fun feed(tag: String, xmlPullParser: XmlPullParser) {
+        when (tag) {
             "title" -> {
                 val attrs = xmlPullParser.getAttrs()
                 val title = xmlPullParser.getNextText()
