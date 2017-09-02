@@ -1,43 +1,68 @@
 package com.tuuzed.feedparser;
 
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 
 
 public class FeedParserTest {
+    private OkHttpClient httpClient;
 
     @Before
     public void setup() {
-        FeedParser.setHttpClient(new OkHttpClient());
+        httpClient = new OkHttpClient.Builder().build();
+    }
+
+    private ResponseBody getResponseBody(String url) {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+        Call call = httpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            return response.body();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Test
     public void rss() throws Exception {
         String rss = "http://news.qq.com/newsgn/rss_newsgn.xml";
-        FeedParser.parse(rss, new FeedHandlerImpl());
+        ResponseBody responseBody = getResponseBody(rss);
+        if (responseBody != null) {
+            FeedParser.parse(responseBody.charStream(), new FeedCallbackImpl());
+        }
     }
 
     @Test
     public void localRss() throws Exception {
         URL url = FeedParserTest.class.getClassLoader().getResource("rss20.xml");
-        System.out.print(url);
-        FeedParser.parse(new FileReader(url.getFile()), new FeedHandlerImpl());
+        if (url != null) {
+            FeedParser.parse(new FileReader(url.getFile()), new FeedCallbackImpl());
+        }
     }
 
     @Test
     public void atom() throws Exception {
         String atom = "https://www.v2ex.com/feed/tab/tech.xml";
-        FeedParser.parse(atom, new FeedHandlerImpl());
+        ResponseBody responseBody = getResponseBody(atom);
+        if (responseBody != null) {
+            FeedParser.parse(responseBody.charStream(), new FeedCallbackImpl());
+        }
     }
 
     @Test
     public void localAtom() throws Exception {
         URL url = FeedParserTest.class.getClassLoader().getResource("atom10.xml");
-        FeedParser.parse(new FileReader(url.getFile()), new FeedHandlerImpl());
+        if (url != null) {
+            FeedParser.parse(new FileReader(url.getFile()), new FeedCallbackImpl());
+        }
     }
 
 }

@@ -12,15 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.xml;
+package com.tuuzed.feedparser.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class XmlParser {
-    public static void parse(XmlPullParser xmlPullParser, Callback callback) {
+public class FastXmlPullParser {
+    public static void parse(@NotNull XmlPullParser xmlPullParser, @NotNull Callback callback) {
         try {
             int eventType = xmlPullParser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -40,10 +41,10 @@ public class XmlParser {
     }
 
     public interface Callback {
-        void startTag(XmlPullParser xmlPullParser, String tagName);
+        void startTag(@NotNull XmlPullParser xmlPullParser, @NotNull String tag);
 
-        void endTag(String tagName);
+        void endTag(@NotNull String tag);
 
-        void error(Throwable throwable);
+        void error(@NotNull Throwable throwable);
     }
 }

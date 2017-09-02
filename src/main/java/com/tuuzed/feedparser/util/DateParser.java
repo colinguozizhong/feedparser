@@ -15,6 +15,8 @@
 package com.tuuzed.feedparser.util;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,58 +25,11 @@ import java.util.*;
 /**
  * 日期解析工具
  */
-public class DateUtils {
-    // 自定义日期格式
-    private static final List<DateFormat> CUSTOM_DATE_FORMATS;
-
-    public static Date parse(String strDate) {
-        return parse(strDate, TimeZone.getTimeZone("Asia/Shanghai"));
-    }
-
-    public static Date parse(String strDate, TimeZone timeZone) {
-        if (strDate == null || strDate.length() == 0) return null;
-        strDate = strDate.trim();
-        if (strDate.length() > 10) {
-            if ((strDate.substring(strDate.length() - 5).indexOf("+") == 0
-                    || strDate.substring(strDate.length() - 5).indexOf("-") == 0)
-                    && strDate.substring(strDate.length() - 5).indexOf(":") == 2) {
-                String sign = strDate.substring(strDate.length() - 5, strDate.length() - 4);
-                strDate = strDate.substring(0, strDate.length() - 5)
-                        + sign + "0" + strDate.substring(strDate.length() - 4);
-            }
-            String dateEnd = strDate.substring(strDate.length() - 6);
-            if ((dateEnd.indexOf("-") == 0 || dateEnd.indexOf("+") == 0) && dateEnd.indexOf(":") == 3) {
-                if (!"GMT".equals(strDate.substring(strDate.length() - 9, strDate.length() - 6))) {
-                    String oldDate = strDate;
-                    String newEnd = dateEnd.substring(0, 3) + dateEnd.substring(4);
-                    strDate = oldDate.substring(0, oldDate.length() - 6) + newEnd;
-                }
-            }
-        }
-        int i = 0;
-        while (i < CUSTOM_DATE_FORMATS.size()) {
-            try {
-                synchronized (CUSTOM_DATE_FORMATS.get(i)) {
-                    CUSTOM_DATE_FORMATS.get(i).setTimeZone(timeZone);
-                    return CUSTOM_DATE_FORMATS.get(i).parse(strDate);
-                }
-            } catch (ParseException | NumberFormatException e) {
-                i++;
-            }
-        }
-        return null;
-    }
-
-    public static String format(Date date, DateFormat df) {
-        return df.format(date);
-    }
-
-    public static void addDateFormat(DateFormat format) {
-        CUSTOM_DATE_FORMATS.add(format);
-    }
+public class DateParser {
+    private static final List<DateFormat> DATE_FORMATS;
 
     static {
-        final String[] possibleDateFormats = {
+        final String[] patterns = {
                 /* RFC 1123 with 2-digit Year */"EEE, dd MMM yy HH:mm:ss z",
                 /* RFC 1123 with 4-digit Year */"EEE, dd MMM yyyy HH:mm:ss z",
                 /* RFC 1123 with no Timezone */"EEE, dd MMM yy HH:mm:ss",
@@ -98,11 +53,35 @@ public class DateUtils {
                 /* Common DateFormat */"yyyy-MM-dd HH:mm:ss",
                 /* Common DateFormat */"yyyy-MM-dd",
                 /* Common DateFormat */"MMM dd, yyyy"};
-
-        CUSTOM_DATE_FORMATS = new ArrayList<>();
-        for (String s : possibleDateFormats) {
-            CUSTOM_DATE_FORMATS.add(new SimpleDateFormat(s, Locale.ENGLISH));
+        DATE_FORMATS = new LinkedList<>();
+        for (String pattern : patterns) {
+            DATE_FORMATS.add(new SimpleDateFormat(pattern, Locale.ENGLISH));
         }
     }
+
+    public static Date parse(@NotNull String source) {
+        return parse(source, TimeZone.getDefault());
+    }
+
+    public static Date parse(@NotNull String source, @NotNull TimeZone timeZone) {
+        source = source.trim();
+        Date date = null;
+        for (DateFormat dateFormat : DATE_FORMATS) {
+            dateFormat.setTimeZone(timeZone);
+            try {
+                date = dateFormat.parse(source);
+                break;
+            } catch (ParseException e) {
+                // pass
+            }
+        }
+        return date;
+    }
+
+    public static void appendDateFormat(@NotNull DateFormat format) {
+        DATE_FORMATS.add(format);
+    }
+
+
 }
 

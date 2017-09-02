@@ -1,3 +1,3 @@
 # FeedParser
-A feed parsing library . 
+A rss and atom parsing library .
 
