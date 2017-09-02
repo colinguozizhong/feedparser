@@ -23,22 +23,34 @@ interface FeedCallback {
     fun start()
 
     /**
+     * /feed/title
      * /rss/channel/title
-     * /atom10:feed/atom10:title
      */
-    fun title(title: String)
+    fun title(title: String, type: String? = null)
 
     /**
-     * /atom10:feed/atom10:subtitle
+     * /feed/subtitle
      * /rss/channel/description
      */
-    fun subtitle(subtitle: String)
+    fun subtitle(subtitle: String, type: String? = null)
 
     /**
-     * /atom10:feed/atom10:link
+     * /feed/link
      * /rss/channel/link
      */
-    fun link(type: String? = null, href: String? = null, title: String? = null)
+    fun link(link: String, type: String? = null, title: String? = null)
+
+    /**
+     *  /feed/rights
+     *  /rss/channel/copyright
+     */
+    fun copyright(copyright: String, type: String? = null)
+
+    /**
+     *  /feed/generator
+     *  /rss/channel/generator
+     */
+    fun generator(generator: String, uri: String? = null, version: String? = null)
 
     /**
      * 解析结束
@@ -56,96 +68,96 @@ interface FeedCallback {
     fun fatalError(throwable: Throwable? = null)
 
     /**
-     * skipDays
+     *  /rss/channel/skipDays
      */
     fun skipDays(skipDays: List<String>)
 
     /**
-     * skipHours
+     * /rss/channel/skipHours
      */
     fun skipHours(skipHours: List<String>)
 
 
-    fun entryStart()
+    fun itemStart()
 
     /**
-     * /atom10:feed/atom10:entry/atom10:author
+     * /feed/entry/author
      * /rss/channel/item/author
      */
-    fun entryAuthor(name: String? = null, uri: String? = null, email: String? = null)
+    fun itemAuthor(author: String, uri: String? = null, email: String? = null)
 
     /**
      * /rss/channel/item/comments
      */
-    fun entryComments(comments: String)
+    fun itemComments(comments: String)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:content
+     * /feed/entry/content
      * /rss/channel/item/body
      */
-    fun entryContent(type: String? = null, language: String? = null, content: String? = null)
+    fun itemContent(content: String, type: String? = null, language: String? = null)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:contributor
+     * /feed/entry/contributor
      * /rss/channel/item/contributor
      */
-    fun entryContributor(name: String? = null, href: String? = null, email: String? = null)
+    fun itemContributor(contributor: String, href: String? = null, email: String? = null)
 
     /**
      * /rss/channel/item/enclosure
      */
-    fun entryEnclosure(length: String? = null, type: String? = null, url: String? = null)
+    fun itemEnclosure(length: String? = null, type: String? = null, url: String? = null)
 
     /**
      * /rss/channel/item/expirationDate
      */
-    fun entryExpired(expired: Date?, rawExpired: String)
+    fun itemExpired(expired: Date?, rawExpired: String)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:id
+     * /feed/entry/id
      * /rss/channel/item/guid
      */
-    fun entryId(id: String)
+    fun itemId(id: String)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:link@href
+     * /feed/entry/link@href
      * /rss/channel/item/link
      */
-    fun entryLink(type: String? = null, href: String? = null, title: String? = null)
+    fun itemLink(link: String, type: String? = null, title: String? = null)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:published
+     * /feed/entry/published
      * /rss/channel/item/pubDate
      */
-    fun entryPublished(published: Date?, rawPublished: String)
+    fun itemPublished(published: Date?, rawPublished: String)
 
     /**
      * /rss/channel/item/source
      */
-    fun entrySource(source: String)
+    fun itemSource(source: String)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:summary
+     * /feed/entry/summary
      * /rss/channel/item/description
      */
-    fun entrySummary(type: String? = null, language: String? = null, summary: String? = null)
+    fun itemSummary(summary: String, type: String? = null, language: String? = null)
 
     /**
-     * /atom10:feed/atom10:entry/category
+     * /feed/entry/category
      * /rss/channel/item/category
      */
-    fun entryTags(term: String? = null, scheme: String? = null, tag: String? = null)
+    fun itemCategory(category: String, term: String? = null, scheme: String? = null)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:title
+     * /feed/entry/title
      * /rss/channel/item/title
      */
-    fun entryTitle(title: String)
+    fun itemTitle(title: String)
 
     /**
-     * /atom10:feed/atom10:entry/atom10:updated
+     * /feed/entry/updated
      */
-    fun entryUpdated(updated: Date?, rawUpdated: String)
+    fun itemUpdated(updated: Date?, rawUpdated: String)
 
-    fun entryEnd()
+    fun itemEnd()
 }

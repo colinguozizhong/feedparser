@@ -16,47 +16,65 @@ package com.tuuzed.feedparser.internal
 
 import com.tuuzed.feedparser.FeedCallback
 import com.tuuzed.feedparser.ext.getAttrs
-import com.tuuzed.feedparser.ext.clear
 import com.tuuzed.feedparser.ext.getNextText
 import com.tuuzed.feedparser.util.DateParser
 import org.xmlpull.v1.XmlPullParser
 
 internal class AtomParser(callback: FeedCallback) : GenericParser(callback) {
-    private var isBeginEntry = false
-    private var isBeginEntryAuthor = false
-    private var isBeginEntryContributor = false
-    private val tmpStrArr = arrayOfNulls<String>(3)
+    private var isStartEntry = false
+    private var isStartEntryAuthor = false
+    private var isStartEntryContributor = false
+    private val tmpMap = hashMapOf<String, String>()
     override fun startTag(tag: String, xmlPullParser: XmlPullParser) {
         when (tag) {
             "feed" -> {
                 callback.start()
             }
             "entry" -> {
-                isBeginEntry = true
-                callback.entryStart()
+                isStartEntry = true
+                callback.itemStart()
             }
         }
-        if (isBeginEntry) entry(tag, xmlPullParser)
+        if (isStartEntry) entry(tag, xmlPullParser)
         else feed(tag, xmlPullParser)
     }
 
     private fun feed(tagName: String, xmlPullParser: XmlPullParser) {
         when (tagName) {
             "title" -> {
+                val attrs = xmlPullParser.getAttrs()
                 val title = xmlPullParser.getNextText()
                 if (title != null) {
-                    callback.title(title)
+                    callback.title(title, attrs["type"])
                 }
             }
             "subtitle" -> {
+                val attrs = xmlPullParser.getAttrs()
                 val subtitle = xmlPullParser.getNextText()
                 if (subtitle != null) {
-                    callback.subtitle(subtitle)
+                    callback.subtitle(subtitle, attrs["type"])
                 }
             }
             "link" -> {
                 val attrs = xmlPullParser.getAttrs()
-                callback.link(attrs["type"], attrs["href"], attrs["title"])
+                val link = attrs["href"]
+                if (link != null) {
+                    callback.link(link, attrs["type"], attrs["title"])
+                }
+            }
+            "rights" -> {
+                val attrs = xmlPullParser.getAttrs()
+                val rights = xmlPullParser.getNextText()
+                if (rights != null) {
+                    callback.copyright(rights, attrs["type"])
+                }
+            }
+            "generator" -> {
+                val attrs = xmlPullParser.getAttrs()
+                val generator = xmlPullParser.getNextText()
+                if (generator != null) {
+                    callback.generator(generator, attrs["uri"], attrs["version"])
+                }
             }
         }
     }
@@ -64,58 +82,85 @@ internal class AtomParser(callback: FeedCallback) : GenericParser(callback) {
     private fun entry(tag: String, xmlPullParser: XmlPullParser) {
         when (tag) {
             "author" -> {
-                isBeginEntryAuthor = true
+                isStartEntryAuthor = true
             }
             "name" -> {
-                if (isBeginEntryAuthor || isBeginEntryContributor) tmpStrArr[0] = xmlPullParser.getNextText()
+                if (isStartEntryAuthor || isStartEntryAuthor) {
+                    val name = xmlPullParser.getNextText()
+                    if (name != null) {
+                        tmpMap.put("name", name)
+                    }
+                }
             }
             "uri" -> {
-                if (isBeginEntryAuthor || isBeginEntryContributor) tmpStrArr[1] = xmlPullParser.getNextText()
+                if (isStartEntryAuthor || isStartEntryAuthor) {
+                    val uri = xmlPullParser.getNextText()
+                    if (uri != null) {
+                        tmpMap.put("uri", uri)
+                    }
+                }
             }
             "email" -> {
-                if (isBeginEntryAuthor || isBeginEntryContributor) tmpStrArr[2] = xmlPullParser.getNextText()
+                if (isStartEntryAuthor || isStartEntryAuthor) {
+                    val email = xmlPullParser.getNextText()
+                    if (email != null) {
+                        tmpMap.put("email", email)
+                    }
+                }
             }
             "content" -> {
                 val attrs = xmlPullParser.getAttrs()
-                callback.entryContent(attrs["type"], attrs["language"], xmlPullParser.getNextText())
+                val content = xmlPullParser.getNextText()
+                if (content != null) {
+                    callback.itemContent(content, attrs["type"], attrs["language"])
+                }
             }
             "contributor" -> {
-                isBeginEntryContributor = true
+                isStartEntryContributor = true
             }
             "id" -> {
                 val id = xmlPullParser.getNextText()
                 if (id != null) {
-                    callback.entryId(id)
+                    callback.itemId(id)
                 }
             }
             "link" -> {
                 val attrs = xmlPullParser.getAttrs()
-                callback.entryLink(attrs["type"], attrs["href"], attrs["title"])
+                val link = attrs["href"]
+                if (link != null) {
+                    callback.itemLink(link, attrs["type"], attrs["title"])
+                }
             }
             "published" -> {
                 val published = xmlPullParser.getNextText()
                 if (published != null) {
-                    callback.entryPublished(DateParser.parse(published), published)
+                    callback.itemPublished(DateParser.parse(published), published)
                 }
             }
             "summary" -> {
                 val attrs = xmlPullParser.getAttrs()
-                callback.entrySummary(attrs["type"], attrs["language"], xmlPullParser.getNextText())
+                val summary = xmlPullParser.getNextText()
+                if (summary != null) {
+                    callback.itemSummary(summary, attrs["type"], attrs["language"])
+                }
             }
             "category" -> {
                 val attrs = xmlPullParser.getAttrs()
-                callback.entryTags(attrs["term"], attrs["scheme"], xmlPullParser.getNextText())
+                val category = xmlPullParser.getNextText()
+                if (category != null) {
+                    callback.itemCategory(category, attrs["term"], attrs["scheme"])
+                }
             }
             "title" -> {
                 val title = xmlPullParser.getNextText()
                 if (title != null) {
-                    callback.entryTitle(title)
+                    callback.itemTitle(title)
                 }
             }
             "updated" -> {
                 val updated = xmlPullParser.getNextText()
                 if (updated != null) {
-                    callback.entryUpdated(DateParser.parse(updated), updated)
+                    callback.itemUpdated(DateParser.parse(updated), updated)
                 }
             }
         }
@@ -125,18 +170,24 @@ internal class AtomParser(callback: FeedCallback) : GenericParser(callback) {
         when (tag) {
             "feed" -> callback.end()
             "entry" -> {
-                isBeginEntry = false
-                callback.entryEnd()
+                isStartEntry = false
+                callback.itemEnd()
             }
             "author" -> {
-                callback.entryAuthor(tmpStrArr[0], tmpStrArr[1], tmpStrArr[2])
-                tmpStrArr.clear()
-                isBeginEntryAuthor = false
+                val author = tmpMap["name"]
+                if (author != null) {
+                    callback.itemAuthor(author, tmpMap["uri"], tmpMap["email"])
+                }
+                tmpMap.clear()
+                isStartEntryAuthor = false
             }
             "contributor" -> {
-                callback.entryContributor(tmpStrArr[0], tmpStrArr[1], tmpStrArr[2])
-                tmpStrArr.clear()
-                isBeginEntryContributor = false
+                val contributor = tmpMap["name"]
+                if (contributor != null) {
+                    callback.itemContributor(contributor, tmpMap["uri"], tmpMap["email"])
+                }
+                tmpMap.clear()
+                isStartEntryContributor = false
             }
         }
     }

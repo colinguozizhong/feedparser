@@ -51,7 +51,7 @@ internal object DateParser {
                 /* Common DateFormat */"yyyy-MM-dd",
                 /* Common DateFormat */"MMM dd, yyyy")
 
-        DATE_FORMATS = DATE_PATTERNS.mapTo(ArrayList()) { SimpleDateFormat(it, Locale.ENGLISH) }
+        DATE_FORMATS = DATE_PATTERNS.mapTo(mutableListOf()) { SimpleDateFormat(it, Locale.ENGLISH) }
     }
 
     fun parse(source: String, timeZone: TimeZone = TimeZone.getDefault()): Date? {
