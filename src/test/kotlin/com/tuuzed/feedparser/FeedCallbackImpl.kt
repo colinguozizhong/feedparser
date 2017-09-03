@@ -35,11 +35,11 @@ class FeedCallbackImpl : FeedCallback {
     }
 
     override fun error(throwable: Throwable?) {
-        logger.info(throwable!!.message, throwable)
+        logger.error(throwable!!.message, throwable)
     }
 
     override fun fatalError(throwable: Throwable?) {
-        logger.info(throwable!!.message, throwable)
+        logger.error(throwable!!.message, throwable)
     }
 
     override fun skipDays(skipDays: List<String>) {

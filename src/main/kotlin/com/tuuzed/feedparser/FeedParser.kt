@@ -78,7 +78,7 @@ object FeedParser {
                 charset = matcher.group(2)
             }
             reader = InputStreamReader(ByteArrayInputStream(output.toByteArray()),
-                    if (charset == null) defCharset else defCharset)
+                    if (charset == null) defCharset else charset)
             parse(reader, callback)
         } catch (e: Exception) {
             callback.fatalError(e)
