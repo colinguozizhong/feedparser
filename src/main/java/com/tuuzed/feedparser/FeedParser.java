@@ -36,8 +36,20 @@ public class FeedParser {
         InputStream input = null;
         Reader reader = null;
         String charset = null;
+        HttpURLConnection connection = null;
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            int responseCode = connection.getResponseCode();
+            // 重定向
+            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                    || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+                String redirectUrl = connection.getHeaderField("location");
+                if (redirectUrl != null) {
+                    parse(redirectUrl, callback, defCharset);
+                    return;
+                }
+            }
+            // 非重定向
             final String contentType = connection.getContentType();
             if (contentType != null) {
                 Matcher matcher = CHARSET_PATTERN.matcher(contentType);
@@ -53,12 +65,15 @@ public class FeedParser {
                 reader = new InputStreamReader(input, charset);
                 parse(reader, callback);
             }
-
         } catch (IOException e) {
             callback.fatalError(e);
         } finally {
             safeClose(reader);
             safeClose(input);
+            if (connection != null) {
+                connection.disconnect();
+            }
+
         }
     }
 

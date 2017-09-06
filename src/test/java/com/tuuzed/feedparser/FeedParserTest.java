@@ -16,6 +16,16 @@ public class FeedParserTest {
     }
 
     @Test
+    public void redirect_rss() throws Exception {
+        FeedParser.parse("http://www.zhihu.com/rss", new FeedCallbackImpl());
+    }
+
+    @Test
+    public void redirect_atom() throws Exception {
+        FeedParser.parse("http://www.v2ex.com/feed/tab/tech.xml", new FeedCallbackImpl());
+    }
+
+    @Test
     public void atom() throws Exception {
         FeedParser.parse("https://www.v2ex.com/feed/tab/tech.xml", new FeedCallbackImpl());
     }
