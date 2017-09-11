@@ -19,20 +19,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeedParser {
+
     private static Pattern CHARSET_PATTERN = Pattern.compile(
-            "(encoding|charset)=.*(GB2312|UTF-8|GBK).*",
-            Pattern.CASE_INSENSITIVE);
+            "(encoding|charset)=.*(GB2312|UTF-8|GBK).*", Pattern.CASE_INSENSITIVE);
 
     public static void appendDateFormat(@NotNull DateFormat format) {
         DateParser.appendDateFormat(format);
     }
 
     public static void parse(@NotNull String url, @NotNull FeedCallback callback) {
-        parse(url, callback, "utf-8");
+        parse(url, "utf-8", callback);
     }
 
-    public static void parse(@NotNull String url, @NotNull FeedCallback callback,
-                             @NotNull String defCharset) {
+    public static void parse(@NotNull String url, @NotNull String defCharset, @NotNull FeedCallback callback) {
         InputStream input = null;
         Reader reader = null;
         String charset = null;
@@ -45,7 +44,7 @@ public class FeedParser {
                     || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                 String redirectUrl = connection.getHeaderField("location");
                 if (redirectUrl != null) {
-                    parse(redirectUrl, callback, defCharset);
+                    parse(redirectUrl, defCharset, callback);
                     return;
                 }
             }
@@ -59,11 +58,12 @@ public class FeedParser {
             }
             input = connection.getInputStream();
             // 没有匹配到编码
-            if (charset == null) parse(input, callback, defCharset);
-                // 匹配到编码
+            if (charset == null) {
+                parse(input, defCharset, callback);
+            }
+            // 匹配到编码
             else {
-                reader = new InputStreamReader(input, charset);
-                parse(reader, callback);
+                parse(reader = new InputStreamReader(input, charset), callback);
             }
         } catch (IOException e) {
             callback.fatalError(e);
@@ -78,11 +78,10 @@ public class FeedParser {
     }
 
     public static void parse(@NotNull InputStream input, @NotNull FeedCallback callback) {
-        parse(input, callback, "utf-8");
+        parse(input, "utf-8", callback);
     }
 
-    public static void parse(@NotNull InputStream input, @NotNull FeedCallback callback,
-                             @NotNull String defCharset) {
+    public static void parse(@NotNull InputStream input, @NotNull String defCharset, @NotNull FeedCallback callback) {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         Reader reader = null;
         final byte[] buffer = new byte[2048];
@@ -151,7 +150,6 @@ public class FeedParser {
         }
     }
 
-
     private static void safeClose(@Nullable Closeable closeable) {
         if (closeable != null) {
             try {
@@ -161,5 +159,4 @@ public class FeedParser {
             }
         }
     }
-
 }
