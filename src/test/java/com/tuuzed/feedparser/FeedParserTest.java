@@ -13,6 +13,7 @@ public class FeedParserTest {
         FeedParser.parse("http://epayment.blog.sohu.com/rss", new FeedCallbackImpl());
         FeedParser.parse("http://paynews.net/portal.php?mod=rss", new FeedCallbackImpl());
         FeedParser.parse("http://news.qq.com/newsgn/rss_newsgn.xml", new FeedCallbackImpl());
+        FeedParser.parse("http://feedmaker.kindle4rss.com/feeds/choice.thepaper.xml", new FeedCallbackImpl());
     }
 
     @Test

@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.internal;
+package com.tuuzed.feedparser.impl;
 
+import com.tuuzed.feedparser.Parser;
 import com.tuuzed.feedparser.FeedCallback;
 import com.tuuzed.feedparser.util.DateParser;
 import com.tuuzed.feedparser.util.XmlPullParserUtils;
@@ -23,7 +24,7 @@ import org.xmlpull.v1.XmlPullParser;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AtomParser extends GenericParser {
+public class AtomParser extends Parser {
     private boolean isBeginEntry = false;
     private boolean isBeginEntryAuthor = false;
     private boolean isBeginEntryContributor = false;

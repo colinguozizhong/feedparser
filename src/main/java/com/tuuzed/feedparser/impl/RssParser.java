@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.internal;
+package com.tuuzed.feedparser.impl;
 
 
+import com.tuuzed.feedparser.Parser;
 import com.tuuzed.feedparser.FeedCallback;
 import com.tuuzed.feedparser.util.DateParser;
 import com.tuuzed.feedparser.util.XmlPullParserUtils;
@@ -25,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class RssParser extends GenericParser {
+public class RssParser extends Parser {
     private boolean isStartChannel = false;
     private boolean isStartImage = false;
     private boolean isStartTextInput = false;
@@ -64,30 +65,19 @@ public class RssParser extends GenericParser {
                 callback.itemStart();
                 break;
         }
-        if (isStartChannel) {
-            if (isStartItem) {
-                // item
-                item(tag, xmlPullParser);
-            } else if (isStartImage) {
-                // image
-            } else if (isStartSkipDays && tmpList != null && "day".equals(tag)) {
-                // skipDays
-                String skipDay = XmlPullParserUtils.getNextText(xmlPullParser);
-                if (skipDay != null) {
-                    tmpList.add(skipDay);
-                }
-            } else if (isStartSkipHours && tmpList != null && "hour".equals(tag)) {
-                // skipHours
-                String skipHour = XmlPullParserUtils.getNextText(xmlPullParser);
-                if (skipHour != null) {
-                    tmpList.add(skipHour);
-                }
-            } else if (isStartTextInput) {
-                // textInput
-            } else {
-                // channel
-                channel(tag, xmlPullParser);
-            }
+        if (!isStartChannel) return;
+        if (isStartSkipDays && tmpList != null && "day".equals(tag)) { // skipDays
+            String skipDay = XmlPullParserUtils.getNextText(xmlPullParser);
+            if (skipDay != null) tmpList.add(skipDay);
+        } else if (isStartSkipHours && tmpList != null && "hour".equals(tag)) { // skipHours
+            String skipHour = XmlPullParserUtils.getNextText(xmlPullParser);
+            if (skipHour != null) tmpList.add(skipHour);
+        } else if (isStartItem) {  // item
+            item(tag, xmlPullParser);
+        } else if (isStartTextInput) { // textInput
+        } else if (isStartImage) {   // image
+        } else {  // channel
+            channel(tag, xmlPullParser);
         }
     }
 
@@ -176,9 +166,10 @@ public class RssParser extends GenericParser {
                 }
                 break;
             }
-            case "body": {
+            case "body":
+            case "content:encoded": {
                 Map<String, String> attrs = XmlPullParserUtils.getAttrs(xmlPullParser);
-                String content = attrs.get("content");
+                String content = XmlPullParserUtils.getNextText(xmlPullParser);
                 if (content != null) {
                     callback.itemContent(content, attrs.get("type"), attrs.get("language"));
                 }

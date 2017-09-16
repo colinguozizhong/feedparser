@@ -14,7 +14,6 @@
  */
 package com.tuuzed.feedparser.util;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -81,7 +80,5 @@ public class DateParser {
     public static void appendDateFormat(@NotNull DateFormat format) {
         DATE_FORMATS.add(format);
     }
-
-
 }
 

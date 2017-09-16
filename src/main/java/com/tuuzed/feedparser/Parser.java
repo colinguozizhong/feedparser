@@ -12,17 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tuuzed.feedparser.internal;
+package com.tuuzed.feedparser;
 
-import com.tuuzed.feedparser.FeedCallback;
 import org.jetbrains.annotations.NotNull;
 import org.xmlpull.v1.XmlPullParser;
 
-public abstract class GenericParser {
+public abstract class Parser {
+    protected FeedCallback callback;
 
-    FeedCallback callback;
-
-    GenericParser(@NotNull FeedCallback callback) {
+    protected Parser(@NotNull FeedCallback callback) {
         this.callback = callback;
     }
 

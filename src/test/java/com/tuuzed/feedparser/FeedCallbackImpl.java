@@ -136,7 +136,7 @@ public class FeedCallbackImpl implements FeedCallback {
 
     @Override
     public void itemTitle(@NotNull String title) {
-        logger.info("updated: {}", title);
+        logger.info("title: {}", title);
     }
 
     @Override
